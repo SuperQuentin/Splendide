@@ -36,7 +36,7 @@ namespace Splendor
 
         //id of the player that is playing
         private int currentPlayerId;
-        //boolean to enable us to know if the user can clic on a coin or a card
+        //boolean to enable us to know if the user can click on a coin or a card
         private bool enableClicLabel;
         //connection to the database
         private ConnectionDB conn;
@@ -64,23 +64,33 @@ namespace Splendor
             lblRubisCoin.Text = "7";
             lblSaphirCoin.Text = "7";
 
+            conn = new ConnectionDB();
+
+            //load cards from the database
+            //they are not hard coded any more
+            //TO DO
+
             Card card11 = new Card();
             card11.Level = 1;
             card11.PrestigePt = 1;
             card11.Cout = new int[] { 1, 0, 2, 0, 2 };
+            card11.Ress = Ressources.Rubis;
 
             Card card12 = new Card();
             card12.Level = 1;
             card12.PrestigePt = 0;
             card12.Cout = new int[] { 0, 1, 2, 1, 0 };
+            card12.Ress = Ressources.Saphir;
 
             txtLevel11.Text = card11.ToString();
             txtLevel12.Text = card12.ToString();
 
-            conn = new ConnectionDB();
-
             //load cards from the database
-            //TO DO
+            Stack<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
+            //Go through the results
+            //Don't forget to check when you are at the end of the stack
+            
+            //fin TO DO
 
             this.Width = 680;
             this.Height = 540;
@@ -95,10 +105,20 @@ namespace Splendor
             cmdValidateChoice.Visible = false;
             cmdNextPlayer.Visible = false;
 
+            //we wire the click on all cards to the same event
+            //TO DO for all cards
+            txtLevel11.Click += ClickOnCard;
+        }
+
+        private void ClickOnCard(object sender, EventArgs e)
+        {
+            //We get the value on the card and we split it to get all the values we need (number of prestige points and ressource)
+            //Enable the button "Validate"
+            //TO DO
         }
 
         /// <summary>
-        /// clic on the play button
+        /// click on the play button
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -159,7 +179,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clic on the red coin (rubis) to tell the player has selected this coin
+        /// click on the red coin (rubis) to tell the player has selected this coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -169,14 +189,14 @@ namespace Splendor
             {
                 cmdValidateChoice.Visible = true;
                 lblChoiceRubis.Visible = true;
-                //TO DO check if possible, update the number of available coin
+                //TO DO check if possible to choose a coin, update the number of available coin
                 nbRubis++;
                 lblChoiceRubis.Text = nbRubis + "\r\n";
             }
         }
 
         /// <summary>
-        /// clic on the blue coin (saphir) to tell the player has selected this coin
+        /// click on the blue coin (saphir) to tell the player has selected this coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -186,7 +206,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clic on the black coin (onyx) to tell the player has selected this coin
+        /// click on the black coin (onyx) to tell the player has selected this coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -196,7 +216,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clic on the green coin (emeraude) to tell the player has selected this coin
+        /// click on the green coin (emeraude) to tell the player has selected this coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -207,7 +227,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clic on the white coin (diamand) to tell the player has selected this coin
+        /// click on the white coin (diamand) to tell the player has selected this coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -217,22 +237,20 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clci on the validate button to approve the selection of coins or card
+        /// click on the validate button to approve the selection of coins or card
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
             cmdNextPlayer.Visible = true;
-            //TO DO Check id card or coins selected, impossible to do both at the same time
-
-            
+            //TO DO Check if card or coins are selected, impossible to do both at the same time
             
             cmdNextPlayer.Enabled = true;
         }
 
         /// <summary>
-        /// clic on the insert button to insert player in the game
+        /// click on the insert button to insert player in the game
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -242,17 +260,16 @@ namespace Splendor
         }
 
         /// <summary>
-        /// clic on the next player to tell him it is his turn
+        /// click on the next player to tell him it is his turn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cmdNextPlayer_Click(object sender, EventArgs e)
         {
             //TO DO in release 1.0 : 3 is hard coded (number of players for the game), it shouldn't. 
-            currentPlayerId = (currentPlayerId + 1 ) % 3;
-            LoadPlayer(currentPlayerId);
-
-            cmdNextPlayer.Enabled = false;
+            //TO DO Get the id of the player : in release 0.1 there are only 3 players
+            //Reload the data of the player
+            //We are not allowed to click on the next button
             
         }
 

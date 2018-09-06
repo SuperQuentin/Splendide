@@ -27,16 +27,53 @@ namespace Splendor
             m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
             m_dbConnection.Open();
 
+            //create and insert players
             CreateInsertPlayer();
-            
+            //Create and insert cards
+            //TO DO
+            CreateInsertCards();
+            //Create and insert ressources
+            //TO DO
+            CreateInsertRessources();
         }
 
+
         /// <summary>
-        /// create the table "player" and insert data
+        /// get the list of cards according to the level
+        /// </summary>
+        /// <returns>cards stack</returns>
+        public Stack<Card> GetListCardAccordingToLevel(int level)
+        {
+            //Get all the data from card table selecting them according to the data
+            //TO DO
+            //Create an object "Stack of Card"
+            Stack<Card> listCard = new Stack<Card>();
+            //do while to go to every record of the card table
+            //while (....)
+            //{
+                //Get the ressourceid and the number of prestige points
+                //Create a card object
+                
+                //select the cost of the card : look at the cost table (and other)
+                
+                //do while to go to every record of the card table
+                //while (....)
+                //{
+                    //get the nbRessource of the cost
+                //}
+                //push card into the stack
+                
+            //}
+            return listCard;
+        }
+
+
+        /// <summary>
+        /// create the "player" table and insert data
         /// </summary>
         private void CreateInsertPlayer()
         {
-            string sql = "CREATE TABLE player (id INT, pseudo VARCHAR(20))";
+            string sql = "CREATE TABLE player (id INT PRIMARY KEY, pseudo VARCHAR(20))";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
@@ -69,6 +106,22 @@ namespace Splendor
             }
             return name;
         }
-        
+
+        /// <summary>
+        /// create the table "ressources" and insert data
+        /// </summary>
+        private void CreateInsertRessources()
+        {
+            //TO DO
+        }
+
+        /// <summary>
+        ///  create tables "cards", "cost" and insert data
+        /// </summary>
+        private void CreateInsertCards()
+        {
+           //TO DO
+        }
+
     }
 }
