@@ -213,17 +213,24 @@ namespace Splendor
                 cmdValidateChoice.Visible = true;
                 lblChoiceRubis.Visible = true;
 
-                if(nbRubis.ToString() == "2")
+                if(availableRubis == 2)
                 {
                     MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
                 }
                 else
                 {
-                    nbRubis++;
-                    availableRubis--;
-                    lblRubisCoin.Text = availableRubis.ToString();
-                    lblChoiceRubis.Text = nbRubis + "\r\n";
-                }
+                    if (nbRubis == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                    }
+                    else
+                    {
+                        nbRubis++;
+                        availableRubis--;
+                        lblRubisCoin.Text = availableRubis.ToString();
+                        lblChoiceRubis.Text = nbRubis + "\r\n";
+                    }
+                }                
             }
         }
 
@@ -239,16 +246,23 @@ namespace Splendor
                 cmdValidateChoice.Visible = true;
                 lblChoiceSaphir.Visible = true;
 
-                if (nbSaphir.ToString() == "2")
+                if (availableSaphir == 2)
                 {
                     MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
                 }
                 else
                 {
-                    nbSaphir++;
-                    availableSaphir--;
-                    lblSaphirCoin.Text = availableSaphir.ToString();
-                    lblChoiceSaphir.Text = nbSaphir + "\r\n";
+                    if (nbSaphir == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                    }
+                    else
+                    {
+                        nbSaphir++;
+                        availableSaphir--;
+                        lblSaphirCoin.Text = availableSaphir.ToString();
+                        lblChoiceSaphir.Text = nbSaphir + "\r\n";
+                    }
                 }
             }
         }
@@ -265,16 +279,23 @@ namespace Splendor
                 cmdValidateChoice.Visible = true;
                 lblChoiceOnyx.Visible = true;
 
-                if (nbOnyx.ToString() == "2")
+                if (availableOnyx == 2)
                 {
                     MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
                 }
                 else
                 {
-                    nbOnyx++;
-                    availableOnyx--;
-                    lblOnyxCoin.Text = availableOnyx.ToString();
-                    lblChoiceOnyx.Text = nbOnyx + "\r\n";
+                    if (nbOnyx == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                    }
+                    else
+                    {
+                        nbOnyx++;
+                        availableOnyx--;
+                        lblOnyxCoin.Text = availableOnyx.ToString();
+                        lblChoiceOnyx.Text = nbOnyx + "\r\n";
+                    }
                 }
             }
         }
@@ -291,16 +312,23 @@ namespace Splendor
                 cmdValidateChoice.Visible = true;
                 lblChoiceEmeraude.Visible = true;
 
-                if (nbEmeraude.ToString() == "2")
+                if (availableEmeraude == 2)
                 {
                     MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
                 }
                 else
                 {
-                    nbEmeraude++;
-                    availableEmeraude--;
-                    lblEmeraudeCoin.Text = availableEmeraude.ToString();
-                    lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+                    if (nbEmeraude == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                    }
+                    else
+                    {
+                        nbEmeraude++;
+                        availableEmeraude--;
+                        lblEmeraudeCoin.Text = availableEmeraude.ToString();
+                        lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+                    }
                 }
             }
         }
@@ -317,16 +345,23 @@ namespace Splendor
                 cmdValidateChoice.Visible = true;
                 lblChoiceDiamand.Visible = true;
 
-                if (nbDiamand.ToString() == "2")
+                if (availableDiamand == 2)
                 {
                     MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
                 }
                 else
                 {
-                    nbDiamand++;
-                    availableDiamand--;
-                    lblDiamandCoin.Text = availableDiamand.ToString();
-                    lblChoiceDiamand.Text = nbDiamand + "\r\n";
+                    if (nbDiamand == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                    }
+                    else
+                    {
+                        nbDiamand++;
+                        availableDiamand--;
+                        lblDiamandCoin.Text = availableDiamand.ToString();
+                        lblChoiceDiamand.Text = nbDiamand + "\r\n";
+                    }
                 }
             }
         }
@@ -375,7 +410,7 @@ namespace Splendor
             lblRubisCoin.Text = availableRubis.ToString();
             lblChoiceRubis.Text = nbRubis + "\r\n";
 
-            if (nbRubis.ToString() == "0")
+            if (nbRubis == 0)
             {
                 lblChoiceRubis.Visible = false;
             }
@@ -388,7 +423,7 @@ namespace Splendor
             lblSaphirCoin.Text = availableSaphir.ToString();
             lblChoiceSaphir.Text = nbSaphir + "\r\n";
 
-            if (nbSaphir.ToString() == "0")
+            if (nbSaphir == 0)
             {
                 lblChoiceSaphir.Visible = false;
             }
@@ -401,7 +436,7 @@ namespace Splendor
             lblOnyxCoin.Text = availableOnyx.ToString();
             lblChoiceOnyx.Text = nbOnyx + "\r\n";
 
-            if (nbOnyx.ToString() == "0")
+            if (nbOnyx == 0)
             {
                 lblChoiceOnyx.Visible = false;
             }
@@ -414,7 +449,7 @@ namespace Splendor
             lblEmeraudeCoin.Text = availableEmeraude.ToString();
             lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
 
-            if (nbEmeraude.ToString() == "0")
+            if (nbEmeraude == 0)
             {
                 lblChoiceEmeraude.Visible = false;
             }
@@ -427,7 +462,7 @@ namespace Splendor
             lblDiamandCoin.Text = availableDiamand.ToString();
             lblChoiceDiamand.Text = nbDiamand + "\r\n";
 
-            if (nbDiamand.ToString() == "0")
+            if (nbDiamand == 0)
             {
                 lblChoiceDiamand.Visible = false;
             }
