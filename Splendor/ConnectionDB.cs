@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using System.IO;
 
 namespace Splendor
 {
@@ -14,7 +15,8 @@ namespace Splendor
     class ConnectionDB
     {
         //connection to the database
-        private SQLiteConnection m_dbConnection; 
+        private SQLiteConnection m_dbConnection;
+        private List<Card> allCards = new List<Card>();
 
         /// <summary>
         /// constructor : creates the connection to the database SQLite
@@ -112,15 +114,67 @@ namespace Splendor
         /// </summary>
         private void CreateInsertRessources()
         {
-            //TO DO
+            string sql = "CREATE TABLE ressource (id INTEGER PRIMARY KEY, name VARCHAR(20))";
+            var command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Rubis + ",\"rubis\")";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Emeraude + ",\"emeraude\")";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Onyx + ",\"onyx\")";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Saphir + ",\"saphir\")";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Diamand + ",\"diamand\")";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+
         }
+      
 
         /// <summary>
         ///  create tables "cards", "cost" and insert data
         /// </summary>
         private void CreateInsertCards()
         {
-           //TO DO
+            string sql = "CREATE TABLE card (id INTEGER PRIMARY KEY, fkRessource INT, level INT, nbPtPrestige INT, fkPlayer INT)";
+            var command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "CREATE TABLE cost (id INTEGER PRIMARY KEY, fkCard INT, fkRessource INT, nbRessource INT)";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            var card = new Card();
+
+            card.AddCard(1,3,1,new int[] { 1, 1, 1, 1 });
+
+            
+
+
+
+        }
+
+        private void ImportCardCsv()
+        {
+            using (var reader = new StreamReader("./cards.csv"))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var value = line.Split(';');
+                }
+            }
         }
 
     }
