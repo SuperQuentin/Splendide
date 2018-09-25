@@ -155,24 +155,31 @@ namespace Splendor
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            var card = new Card();
-
-            card.AddCard(1,3,1,new int[] { 1, 1, 1, 1 });
-
-            
+                   
 
 
 
         }
 
-        private void ImportCardCsv()
+        public void ImportCardCsv()
         {
+            var card = new Card();
+
             using (var reader = new StreamReader("./cards.csv"))
             {
+                reader.ReadLine();
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    var value = line.Split(';');
+                    var values = line.Split(';');
+                    var newValues = new int[8]; 
+
+                    for (int x = 0; x < values.Length; x++)
+                    {
+                        newValues[x] = int.Parse(values[x] == "" ? "0" : values[x]);
+                    }
+
+                    card.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
                 }
             }
         }
