@@ -34,6 +34,9 @@ namespace Splendor
         private int nbDiamand;
         private int nbSaphir;
 
+        //used to store the total number of coins
+        private int totalCoins;
+
         //used to store the number of coins available
         private int availableDiamand = 7;
         private int availableEmeraude = 7;
@@ -219,16 +222,32 @@ namespace Splendor
                 }
                 else
                 {
-                    if (nbRubis == 2)
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
                     {
-                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
                     }
                     else
                     {
-                        nbRubis++;
-                        availableRubis--;
-                        lblRubisCoin.Text = availableRubis.ToString();
-                        lblChoiceRubis.Text = nbRubis + "\r\n";
+                        totalCoins = nbSaphir + nbOnyx + nbEmeraude + nbDiamand;
+
+                        if (nbRubis == 1 && totalCoins >= 1)
+                        {                                                  
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");                           
+                        }
+                        else
+                        {
+                            if(nbRubis + totalCoins != 3)
+                            {
+                                nbRubis++;
+                                availableRubis--;
+                                lblRubisCoin.Text = availableRubis.ToString();
+                                lblChoiceRubis.Text = nbRubis + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
                     }
                 }                
             }
@@ -252,16 +271,32 @@ namespace Splendor
                 }
                 else
                 {
-                    if (nbSaphir == 2)
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
                     {
-                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
                     }
                     else
                     {
-                        nbSaphir++;
-                        availableSaphir--;
-                        lblSaphirCoin.Text = availableSaphir.ToString();
-                        lblChoiceSaphir.Text = nbSaphir + "\r\n";
+                        totalCoins = nbRubis + nbOnyx + nbEmeraude + nbDiamand;
+
+                        if (nbSaphir == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbSaphir + totalCoins != 3)
+                            {
+                                nbSaphir++;
+                                availableSaphir--;
+                                lblSaphirCoin.Text = availableSaphir.ToString();
+                                lblChoiceSaphir.Text = nbSaphir + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
                     }
                 }
             }
@@ -285,16 +320,32 @@ namespace Splendor
                 }
                 else
                 {
-                    if (nbOnyx == 2)
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
                     {
-                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
                     }
                     else
                     {
-                        nbOnyx++;
-                        availableOnyx--;
-                        lblOnyxCoin.Text = availableOnyx.ToString();
-                        lblChoiceOnyx.Text = nbOnyx + "\r\n";
+                        totalCoins = nbRubis + nbSaphir + nbEmeraude + nbDiamand;
+
+                        if (nbOnyx == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbOnyx + totalCoins != 3)
+                            {
+                                nbOnyx++;
+                                availableOnyx--;
+                                lblOnyxCoin.Text = availableOnyx.ToString();
+                                lblChoiceOnyx.Text = nbOnyx + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
                     }
                 }
             }
@@ -318,16 +369,32 @@ namespace Splendor
                 }
                 else
                 {
-                    if (nbEmeraude == 2)
+                    if (nbEmeraude == 2 || nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbDiamand == 2)
                     {
-                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                        MessageBox.Show("Vous possédez déjà 2 jetons d'un autre type!");
                     }
                     else
                     {
-                        nbEmeraude++;
-                        availableEmeraude--;
-                        lblEmeraudeCoin.Text = availableEmeraude.ToString();
-                        lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+                        totalCoins = nbRubis + nbSaphir + nbOnyx + nbDiamand;
+
+                        if (nbEmeraude == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbEmeraude + totalCoins != 3)
+                            {
+                                nbEmeraude++;
+                                availableEmeraude--;
+                                lblEmeraudeCoin.Text = availableEmeraude.ToString();
+                                lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
                     }
                 }
             }
@@ -351,16 +418,32 @@ namespace Splendor
                 }
                 else
                 {
-                    if (nbDiamand == 2)
+                    if (nbDiamand == 2 || nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2)
                     {
-                        MessageBox.Show("Vous possédez déjà 2 jetons de ce type!");
+                        MessageBox.Show("Vous possédez déjà 2 jetons d'un autre type!");
                     }
                     else
                     {
-                        nbDiamand++;
-                        availableDiamand--;
-                        lblDiamandCoin.Text = availableDiamand.ToString();
-                        lblChoiceDiamand.Text = nbDiamand + "\r\n";
+                        totalCoins = nbRubis + nbSaphir + nbOnyx + nbEmeraude;
+
+                        if (nbDiamand == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbDiamand + totalCoins != 3)
+                            {
+                                nbDiamand++;
+                                availableDiamand--;
+                                lblDiamandCoin.Text = availableDiamand.ToString();
+                                lblChoiceDiamand.Text = nbDiamand + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
                     }
                 }
             }
