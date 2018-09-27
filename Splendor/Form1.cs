@@ -75,6 +75,23 @@ namespace Splendor
             lblRubisCoin.Text = availableRubis.ToString();
             lblSaphirCoin.Text = availableSaphir.ToString();
 
+            txtLevel11.ReadOnly = true;
+            txtLevel12.ReadOnly = true;
+            txtLevel13.ReadOnly = true;
+            txtLevel14.ReadOnly = true;
+            txtLevel21.ReadOnly = true;
+            txtLevel22.ReadOnly = true;
+            txtLevel23.ReadOnly = true;
+            txtLevel24.ReadOnly = true;
+            txtLevel31.ReadOnly = true;
+            txtLevel32.ReadOnly = true;
+            txtLevel33.ReadOnly = true;
+            txtLevel34.ReadOnly = true;
+            txtNoble1.ReadOnly = true;
+            txtNoble2.ReadOnly = true;
+            txtNoble3.ReadOnly = true;
+            txtNoble4.ReadOnly = true;
+
             conn = new ConnectionDB();
 
             //load cards from the database
@@ -456,9 +473,9 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-            cmdNextPlayer.Visible = true;
-            //TO DO Check if card or coins are selected, impossible to do both at the same time
-            
+
+
+            cmdNextPlayer.Visible = true;        
             cmdNextPlayer.Enabled = true;
         }
 
