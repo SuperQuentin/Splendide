@@ -173,7 +173,6 @@ namespace Splendor
             int id = 0;
            
             LoadPlayer(id);
-
         }
 
 
@@ -473,7 +472,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-
+             
 
             cmdNextPlayer.Visible = true;        
             cmdNextPlayer.Enabled = true;
