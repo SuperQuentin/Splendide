@@ -16,35 +16,15 @@ namespace Splendor
         private int prestigePt;
         private int level;
         //tableau : l'index correspond à l'énumération, la valeur à la ressource requise
-        private int[] cout = new int[4];
-        private SQLiteConnection m_dbConnection;
+        private int[] cost = new int[4];
 
 
-
-        public Card(){
-            m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
-            m_dbConnection.Open();
-        }
-
-        public void AddCard(int level, int ressource, int prestige, int[] cost, int player = 0)
+        public Card(int level, int prestigePt, int[] cost, int ress)
         {
-            var sql = "INSERT INTO card(fkRessource,level,nbPtPrestige) values(" + ressource + ", " + level + "," + prestige + ")";
-            var command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-
-            sql = "select last_insert_rowid()";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader read = command.ExecuteReader();
-            var id = read.Read();
-           
-
-            for (int i = 0; i < cost.Length; i++)
-            {
-                sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + id + "," + i + "," + cost[i] + ")";
-                command = new SQLiteCommand(sql, m_dbConnection);
-                command.ExecuteNonQuery();
-            }
-
+            this.level = level;
+            this.prestigePt = prestigePt;
+            this.cost = cost;
+            this.ress = (Ressources)ress;
         }
 
         /// <summary>
@@ -97,15 +77,15 @@ namespace Splendor
         /// <summary>
         /// all the precious stones that are needed to buy the card
         /// </summary>
-        public int[] Cout
+        public int[] Cost
         {
             get
             {
-                return cout;
+                return cost;
             }
             set
             {
-                cout = value;
+                cost = value;
             }
         }
 
@@ -129,7 +109,7 @@ namespace Splendor
             res += "\r\n\r\n";
             int boucle = 0;
             
-            foreach (int i in cout)
+            foreach (int i in cost)
             {
                 
                 string ressource = "";
@@ -147,24 +127,5 @@ namespace Splendor
             }
             return res;
         }
-
-        public void import()
-        {
-            var db = new ConnectionDB();
-
-            var cards = new List<Stack<Card>>();
-
-            for(int x = 0; x<4; x++)
-            {
-                cards[x] = db.GetListCardAccordingToLevel(x+1);
-            }
-
-
-
-        }
-
-
-
-
     }
 }

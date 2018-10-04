@@ -46,26 +46,29 @@ namespace Splendor
         /// <returns>cards stack</returns>
         public Stack<Card> GetListCardAccordingToLevel(int level)
         {
-            //Get all the data from card table selecting them according to the data
-            //TO DO
-            //Create an object "Stack of Card"
+            var sql = "SELECT id,fkRessource,nbPtPrestige,level FROM card where level = "+ level;
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
             Stack<Card> listCard = new Stack<Card>();
-            //do while to go to every record of the card table
-            //while (....)
-            //{
-                //Get the ressourceid and the number of prestige points
-                //Create a card object
-                
-                //select the cost of the card : look at the cost table (and other)
-                
-                //do while to go to every record of the card table
-                //while (....)
-                //{
-                    //get the nbRessource of the cost
-                //}
-                //push card into the stack
-                
-            //}
+
+            while (reader.Read())
+            {
+                sql = "select cost.nbRessource FROM cost where cost.fkCard = " + reader["id"].ToString();
+                SQLiteCommand costCommand = new SQLiteCommand(sql, m_dbConnection);
+                SQLiteDataReader costReader = costCommand.ExecuteReader();
+
+                var cost = new List<int>();
+
+                while (costReader.Read())
+                {
+                    cost.Add(int.Parse(costReader[0].ToString()));
+                }
+
+                listCard.Push(new Card(int.Parse(reader["level"].ToString()), int.Parse(reader["nbPtPrestige"].ToString()), cost.ToArray(), int.Parse(reader["fkRessource"].ToString())));
+
+            }
+
             return listCard;
         }
 
@@ -155,16 +158,46 @@ namespace Splendor
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-                   
+        }
 
+      
 
+        /// <summary>
+        /// Add card in the database
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="ressource"></param>
+        /// <param name="prestige"></param>
+        /// <param name="cost"></param>
+        /// <param name="player"></param>
+        public void AddCard(int level, int ressource, int prestige, int[] cost, int player = 0)
+        {
+            var sql = "INSERT INTO card(fkRessource,level,nbPtPrestige) values(" + ressource + ", " + level + "," + prestige + ")";
+            var command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+
+            sql = "select last_insert_rowid()";
+            command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader read = command.ExecuteReader();
+
+            while (read.Read())
+            {
+                
+                for (int i = 0; i < cost.Length; i++)
+                {
+                    sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + read[0] + "," + i+1 + "," + cost[i] + ")";
+                    command = new SQLiteCommand(sql, m_dbConnection);
+                    command.ExecuteNonQuery();
+                }
+            }
 
         }
 
+        /// <summary>
+        /// Import card from csv to put in the database
+        /// </summary>
         public void ImportCardCsv()
-        {
-            var card = new Card();
-
+        { 
             using (var reader = new StreamReader("./cards.csv"))
             {
                 reader.ReadLine();
@@ -176,10 +209,10 @@ namespace Splendor
 
                     for (int x = 0; x < values.Length; x++)
                     {
-                        newValues[x] = int.Parse(values[x] == "" ? "0" : values[x]);
+                        newValues[x] = int.Parse(values[x].ToString() == "" ? "0" : values[x].ToString());
                     }
 
-                    card.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
+                    this.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
                 }
             }
         }
