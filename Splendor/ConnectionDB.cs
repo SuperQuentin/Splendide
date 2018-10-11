@@ -31,12 +31,15 @@ namespace Splendor
 
             //create and insert players
             CreateInsertPlayer();
+
             //Create and insert cards
-            //TO DO
             CreateInsertCards();
+
             //Create and insert ressources
-            //TO DO
             CreateInsertRessources();
+
+            //Create and insert NbCoin
+            CreateInsertNbCoin();
         }
 
 
@@ -72,6 +75,15 @@ namespace Splendor
             return listCard;
         }
 
+        /// <summary>
+        /// create the "NbCoin" table
+        /// </summary>
+        private void CreateInsertNbCoin()
+        {
+            string sql = "Create Table NbCoin(idNbCoin INTEGER PRIMARY KEY AUTOINCREMENT, fkPlayer INT, fkRessource INT, nbCoin INT, FOREIGN KEY(fkPlayer) References Player(idPlayer), FOREIGn KEY(fkRessource) References Ressource(idRessource))";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            command.ExecuteNonQuery();
+        }
 
         /// <summary>
         /// create the "player" table and insert data
@@ -112,6 +124,24 @@ namespace Splendor
             return name;
         }
 
+        public int[] GetPlayerCoins(int id)
+        {
+            string sql = "select fkRessource, nbCoin from NbCoin where fkPlayer = " + id;
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            int[] coins = new int[5];
+            int playerCoins = 0;
+            int playerRessources = 0;
+            while (reader.Read())
+            {
+                playerCoins = (int)reader["nbCoin"];
+                playerRessources = (int)reader["fkRessource"]; 
+                coins[playerRessources] += playerCoins;
+            }
+
+            return coins;
+        }
+
         /// <summary>
         /// create the table "ressources" and insert data
         /// </summary>
@@ -140,8 +170,6 @@ namespace Splendor
             sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Diamand + ",\"diamand\")";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
-
-
         }
 
 

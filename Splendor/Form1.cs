@@ -34,6 +34,8 @@ namespace Splendor
         private int nbDiamand;
         private int nbSaphir;
 
+        private int id = 0;
+
         //used to store the total number of coins
         private int totalCoins;
 
@@ -95,24 +97,6 @@ namespace Splendor
             conn = new ConnectionDB();
 
             //load cards from the database
-            //they are not hard coded any more
-            /*
-            Card card11 = new Card();
-            card11.Level = 1;
-            card11.PrestigePt = 1;
-            card11.Cost = new int[] { 1, 0, 2, 0, 2 };
-            card11.Ress = Ressources.Rubis;
-
-            Card card12 = new Card();
-            card12.Level = 1;
-            card12.PrestigePt = 0;
-            card12.Cost = new int[] { 0, 1, 2, 1, 0 };
-            card12.Ress = Ressources.Saphir;
-
-            txtLevel11.Text = card11.ToString();
-            txtLevel12.Text = card12.ToString();*/
-
-            //load cards from the database
             Stack<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
             //Go through the results
             //Don't forget to check when you are at the end of the stack
@@ -167,8 +151,6 @@ namespace Splendor
         {
             this.Width = 680;
             this.Height = 780;
-
-            int id = 0;
            
             LoadPlayer(id);
         }
@@ -204,13 +186,14 @@ namespace Splendor
             player.Name = name;
             player.Id = id;
             player.Ressources = new int[] { 2, 0, 1, 1, 1 };
-            player.Coins = new int[] { 0, 0, 0, 0, 0 };
+            player.Coins = conn.GetPlayerCoins(id);
 
-            lblPlayerDiamandCoin.Text = player.Coins[0].ToString();
-            lblPlayerOnyxCoin.Text = player.Coins[1].ToString();
-            lblPlayerRubisCoin.Text = player.Coins[2].ToString();
+            lblPlayerRubisCoin.Text = player.Coins[0].ToString();
+            lblPlayerEmeraudeCoin.Text = player.Coins[1].ToString();
+            lblPlayerOnyxCoin.Text = player.Coins[2].ToString();
             lblPlayerSaphirCoin.Text = player.Coins[3].ToString();
-            lblPlayerEmeraudeCoin.Text = player.Coins[4].ToString();
+            lblPlayerDiamandCoin.Text = player.Coins[4].ToString();
+
             currentPlayerId = id;
 
             lblPlayer.Text = "Jeu de " + name;
@@ -505,6 +488,14 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdNextPlayer_Click(object sender, EventArgs e)
         {
+            if(id == 2)
+            {
+                id = 0;
+            }
+            else
+            {
+                id++;
+            }
             //TO DO in release 1.0 : 3 is hard coded (number of players for the game), it shouldn't. 
             //TO DO Get the id of the player : in release 0.1 there are only 3 players
             //Reload the data of the player
