@@ -34,6 +34,17 @@ namespace Splendor
         private int nbDiamand;
         private int nbSaphir;
 
+        //used to store the total number of coins
+        private int totalCoins;
+
+        //used to store the number of coins available
+        private int availableDiamand = 7;
+        private int availableEmeraude = 7;
+        private int availableOnyx = 7;
+        private int availableRubis = 7;
+        private int availableSaphir = 7;
+        private int availableGold = 5;
+
         //id of the player that is playing
         private int currentPlayerId;
         //boolean to enable us to know if the user can click on a coin or a card
@@ -56,13 +67,30 @@ namespace Splendor
         /// <param name="e"></param>
         private void frmSplendor_Load(object sender, EventArgs e)
         {
-            lblGoldCoin.Text = "5";
+            lblGoldCoin.Text = availableGold.ToString();
 
-            lblDiamandCoin.Text = "7";
-            lblEmeraudeCoin.Text = "7" ;
-            lblOnyxCoin.Text = "7";
-            lblRubisCoin.Text = "7";
-            lblSaphirCoin.Text = "7";
+            lblDiamandCoin.Text = availableDiamand.ToString();
+            lblEmeraudeCoin.Text = availableEmeraude.ToString();
+            lblOnyxCoin.Text = availableOnyx.ToString();
+            lblRubisCoin.Text = availableRubis.ToString();
+            lblSaphirCoin.Text = availableSaphir.ToString();
+
+            txtLevel11.ReadOnly = true;
+            txtLevel12.ReadOnly = true;
+            txtLevel13.ReadOnly = true;
+            txtLevel14.ReadOnly = true;
+            txtLevel21.ReadOnly = true;
+            txtLevel22.ReadOnly = true;
+            txtLevel23.ReadOnly = true;
+            txtLevel24.ReadOnly = true;
+            txtLevel31.ReadOnly = true;
+            txtLevel32.ReadOnly = true;
+            txtLevel33.ReadOnly = true;
+            txtLevel34.ReadOnly = true;
+            txtNoble1.ReadOnly = true;
+            txtNoble2.ReadOnly = true;
+            txtNoble3.ReadOnly = true;
+            txtNoble4.ReadOnly = true;
 
             conn = new ConnectionDB();
 
@@ -108,6 +136,21 @@ namespace Splendor
             //we wire the click on all cards to the same event
             //TO DO for all cards
             txtLevel11.Click += ClickOnCard;
+            txtLevel12.Click += ClickOnCard;
+            txtLevel13.Click += ClickOnCard;
+            txtLevel14.Click += ClickOnCard;
+            txtLevel21.Click += ClickOnCard;
+            txtLevel22.Click += ClickOnCard;
+            txtLevel23.Click += ClickOnCard;
+            txtLevel24.Click += ClickOnCard;
+            txtLevel31.Click += ClickOnCard;
+            txtLevel32.Click += ClickOnCard;
+            txtLevel33.Click += ClickOnCard;
+            txtLevel34.Click += ClickOnCard;
+            txtNoble1.Click += ClickOnCard;
+            txtNoble2.Click += ClickOnCard;
+            txtNoble3.Click += ClickOnCard;
+            txtNoble4.Click += ClickOnCard;
         }
 
         private void ClickOnCard(object sender, EventArgs e)
@@ -130,7 +173,6 @@ namespace Splendor
             int id = 0;
            
             LoadPlayer(id);
-
         }
 
 
@@ -164,7 +206,7 @@ namespace Splendor
             player.Name = name;
             player.Id = id;
             player.Ressources = new int[] { 2, 0, 1, 1, 1 };
-            player.Coins = new int[] { 0, 1, 0, 1, 1 };
+            player.Coins = new int[] { 0, 0, 0, 0, 0 };
 
             lblPlayerDiamandCoin.Text = player.Coins[0].ToString();
             lblPlayerOnyxCoin.Text = player.Coins[1].ToString();
@@ -189,9 +231,41 @@ namespace Splendor
             {
                 cmdValidateChoice.Visible = true;
                 lblChoiceRubis.Visible = true;
-                //TO DO check if possible to choose a coin, update the number of available coin
-                nbRubis++;
-                lblChoiceRubis.Text = nbRubis + "\r\n";
+
+                if(availableRubis == 2)
+                {
+                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+                }
+                else
+                {
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
+                    }
+                    else
+                    {
+                        totalCoins = nbSaphir + nbOnyx + nbEmeraude + nbDiamand;
+
+                        if (nbRubis == 1 && totalCoins >= 1)
+                        {                                                  
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");                           
+                        }
+                        else
+                        {
+                            if(nbRubis + totalCoins != 3)
+                            {
+                                nbRubis++;
+                                availableRubis--;
+                                lblRubisCoin.Text = availableRubis.ToString();
+                                lblChoiceRubis.Text = nbRubis + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
+                    }
+                }                
             }
         }
 
@@ -202,7 +276,46 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblSaphirCoin_Click(object sender, EventArgs e)
         {
-            
+            if (enableClicLabel)
+            {
+                cmdValidateChoice.Visible = true;
+                lblChoiceSaphir.Visible = true;
+
+                if (availableSaphir == 2)
+                {
+                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+                }
+                else
+                {
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
+                    }
+                    else
+                    {
+                        totalCoins = nbRubis + nbOnyx + nbEmeraude + nbDiamand;
+
+                        if (nbSaphir == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbSaphir + totalCoins != 3)
+                            {
+                                nbSaphir++;
+                                availableSaphir--;
+                                lblSaphirCoin.Text = availableSaphir.ToString();
+                                lblChoiceSaphir.Text = nbSaphir + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -212,7 +325,46 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblOnyxCoin_Click(object sender, EventArgs e)
         {
-            
+            if (enableClicLabel)
+            {
+                cmdValidateChoice.Visible = true;
+                lblChoiceOnyx.Visible = true;
+
+                if (availableOnyx == 2)
+                {
+                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+                }
+                else
+                {
+                    if (nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2 || nbDiamand == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons!");
+                    }
+                    else
+                    {
+                        totalCoins = nbRubis + nbSaphir + nbEmeraude + nbDiamand;
+
+                        if (nbOnyx == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbOnyx + totalCoins != 3)
+                            {
+                                nbOnyx++;
+                                availableOnyx--;
+                                lblOnyxCoin.Text = availableOnyx.ToString();
+                                lblChoiceOnyx.Text = nbOnyx + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -222,8 +374,46 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblEmeraudeCoin_Click(object sender, EventArgs e)
         {
+            if (enableClicLabel)
+            {
+                cmdValidateChoice.Visible = true;
+                lblChoiceEmeraude.Visible = true;
 
-            
+                if (availableEmeraude == 2)
+                {
+                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+                }
+                else
+                {
+                    if (nbEmeraude == 2 || nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbDiamand == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons d'un autre type!");
+                    }
+                    else
+                    {
+                        totalCoins = nbRubis + nbSaphir + nbOnyx + nbDiamand;
+
+                        if (nbEmeraude == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbEmeraude + totalCoins != 3)
+                            {
+                                nbEmeraude++;
+                                availableEmeraude--;
+                                lblEmeraudeCoin.Text = availableEmeraude.ToString();
+                                lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -233,7 +423,46 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblDiamandCoin_Click(object sender, EventArgs e)
         {
-            
+            if (enableClicLabel)
+            {
+                cmdValidateChoice.Visible = true;
+                lblChoiceDiamand.Visible = true;
+
+                if (availableDiamand == 2)
+                {
+                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+                }
+                else
+                {
+                    if (nbDiamand == 2 || nbRubis == 2 || nbSaphir == 2 || nbOnyx == 2 || nbEmeraude == 2)
+                    {
+                        MessageBox.Show("Vous possédez déjà 2 jetons d'un autre type!");
+                    }
+                    else
+                    {
+                        totalCoins = nbRubis + nbSaphir + nbOnyx + nbEmeraude;
+
+                        if (nbDiamand == 1 && totalCoins >= 1)
+                        {
+                            MessageBox.Show("Vous ne pouvez avoir qu'un jeton!");
+                        }
+                        else
+                        {
+                            if (nbDiamand + totalCoins != 3)
+                            {
+                                nbDiamand++;
+                                availableDiamand--;
+                                lblDiamandCoin.Text = availableDiamand.ToString();
+                                lblChoiceDiamand.Text = nbDiamand + "\r\n";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -243,9 +472,9 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-            cmdNextPlayer.Visible = true;
-            //TO DO Check if card or coins are selected, impossible to do both at the same time
-            
+             
+
+            cmdNextPlayer.Visible = true;        
             cmdNextPlayer.Enabled = true;
         }
 
@@ -273,5 +502,69 @@ namespace Splendor
             
         }
 
+        private void lblChoiceRubis_Click(object sender, EventArgs e)
+        {
+            nbRubis--;
+            availableRubis++;
+            lblRubisCoin.Text = availableRubis.ToString();
+            lblChoiceRubis.Text = nbRubis + "\r\n";
+
+            if (nbRubis == 0)
+            {
+                lblChoiceRubis.Visible = false;
+            }
+        }
+
+        private void lblChoiceSaphir_Click(object sender, EventArgs e)
+        {
+            nbSaphir--;
+            availableSaphir++;
+            lblSaphirCoin.Text = availableSaphir.ToString();
+            lblChoiceSaphir.Text = nbSaphir + "\r\n";
+
+            if (nbSaphir == 0)
+            {
+                lblChoiceSaphir.Visible = false;
+            }
+        }
+
+        private void lblChoiceOnyx_Click(object sender, EventArgs e)
+        {
+            nbOnyx--;
+            availableOnyx++;
+            lblOnyxCoin.Text = availableOnyx.ToString();
+            lblChoiceOnyx.Text = nbOnyx + "\r\n";
+
+            if (nbOnyx == 0)
+            {
+                lblChoiceOnyx.Visible = false;
+            }
+        }
+
+        private void lblChoiceEmeraude_Click(object sender, EventArgs e)
+        {
+            nbEmeraude--;
+            availableEmeraude++;
+            lblEmeraudeCoin.Text = availableEmeraude.ToString();
+            lblChoiceEmeraude.Text = nbEmeraude + "\r\n";
+
+            if (nbEmeraude == 0)
+            {
+                lblChoiceEmeraude.Visible = false;
+            }
+        }
+
+        private void lblChoiceDiamand_Click(object sender, EventArgs e)
+        {
+            nbDiamand--;
+            availableDiamand++;
+            lblDiamandCoin.Text = availableDiamand.ToString();
+            lblChoiceDiamand.Text = nbDiamand + "\r\n";
+
+            if (nbDiamand == 0)
+            {
+                lblChoiceDiamand.Visible = false;
+            }
+        }
     }
 }
