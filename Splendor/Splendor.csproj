@@ -52,11 +52,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Card.cs" />
-    <Compile Include="CardTitle.cs">
+    <Compile Include="TileCard.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CardTitle.Designer.cs">
-      <DependentUpon>CardTitle.cs</DependentUpon>
+    <Compile Include="TileCard.Designer.cs">
+      <DependentUpon>TileCard.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectionDB.cs" />
     <Compile Include="Form1.cs">
@@ -69,8 +69,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ressources.cs" />
-    <EmbeddedResource Include="CardTitle.resx">
-      <DependentUpon>CardTitle.cs</DependentUpon>
+    <EmbeddedResource Include="TileCard.resx">
+      <DependentUpon>TileCard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace Splendor
 {
-    public partial class CardTitle : Control
+    public partial class TileCard : Control
     {
         public Ressources ress { get; protected set; }
         public int prestigePt { get; protected set; }
         public int level { get; protected set; }
         public int[] cout { get; protected set; } = new int[4];
 
-        public CardTitle()
+        public TileCard()
         {
             InitializeComponent();
         }

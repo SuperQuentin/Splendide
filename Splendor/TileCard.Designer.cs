@@ -1,6 +1,6 @@
 ﻿namespace Splendor
 {
-    partial class CardTitle
+    partial class TileCard
     {
         /// <summary>
         /// Variable nécessaire au concepteur.
