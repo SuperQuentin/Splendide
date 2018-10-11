@@ -66,16 +66,32 @@ namespace Splendor
 
             conn = new ConnectionDB();
 
-            conn.ImportCardCsv();
+            //load cards from the database
+            //they are not hard coded any more
+            //TO DO
+
+            Card card11 = new Card();
+            card11.Level = 1;
+            card11.PrestigePt = 1;
+            card11.Cout = new int[] { 1, 0, 2, 0, 2 };
+            card11.Ress = Ressources.Rubis;
+
+            Card card12 = new Card();
+            card12.Level = 1;
+            card12.PrestigePt = 0;
+            card12.Cout = new int[] { 0, 1, 2, 1, 0 };
+            card12.Ress = Ressources.Saphir;
+
+            txtLevel11.Text = card11.ToString();
+            txtLevel12.Text = card12.ToString();
 
             //load cards from the database
             Stack<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
-            Stack<Card> listCardTwo = conn.GetListCardAccordingToLevel(2);
-            Stack<Card> listCardThree = conn.GetListCardAccordingToLevel(3);
-            Stack<Card> listCardFour = conn.GetListCardAccordingToLevel(4);
+            //Go through the results
+            //Don't forget to check when you are at the end of the stack
+            
+            //fin TO DO
 
-
-      
             this.Width = 680;
             this.Height = 540;
 
@@ -91,7 +107,7 @@ namespace Splendor
 
             //we wire the click on all cards to the same event
             //TO DO for all cards
-
+            txtLevel11.Click += ClickOnCard;
         }
 
         private void ClickOnCard(object sender, EventArgs e)
@@ -256,5 +272,6 @@ namespace Splendor
             //We are not allowed to click on the next button
             
         }
+
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,16 +15,7 @@ namespace Splendor
         private int prestigePt;
         private int level;
         //tableau : l'index correspond à l'énumération, la valeur à la ressource requise
-        private int[] cost = new int[4];
-
-
-        public Card(int level, int prestigePt, int[] cost, int ress)
-        {
-            this.level = level;
-            this.prestigePt = prestigePt;
-            this.cost = cost;
-            this.ress = (Ressources)ress;
-        }
+        private int[] cout = new int[4];
 
         /// <summary>
         /// the precious stone that the card gives
@@ -77,15 +67,15 @@ namespace Splendor
         /// <summary>
         /// all the precious stones that are needed to buy the card
         /// </summary>
-        public int[] Cost
+        public int[] Cout
         {
             get
             {
-                return cost;
+                return cout;
             }
             set
             {
-                cost = value;
+                cout = value;
             }
         }
 
@@ -109,7 +99,7 @@ namespace Splendor
             res += "\r\n\r\n";
             int boucle = 0;
             
-            foreach (int i in cost)
+            foreach (int i in cout)
             {
                 
                 string ressource = "";
@@ -127,5 +117,9 @@ namespace Splendor
             }
             return res;
         }
+
+
+
+
     }
 }
