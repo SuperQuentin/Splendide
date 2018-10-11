@@ -472,10 +472,22 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-             
+            totalCoins = nbRubis + nbSaphir + nbOnyx + nbEmeraude +nbDiamand;
 
-            cmdNextPlayer.Visible = true;        
-            cmdNextPlayer.Enabled = true;
+            if (totalCoins > 1)
+            {
+                Player
+
+                //coins reset
+                nbDiamand = 0;
+                nbOnyx = 0;
+                nbRubis = 0;
+                nbSaphir = 0;
+                nbEmeraude = 0;
+
+                cmdNextPlayer.Visible = true;
+                cmdNextPlayer.Enabled = true;
+            }          
         }
 
         /// <summary>
@@ -502,6 +514,11 @@ namespace Splendor
             
         }
 
+        /// <summary>
+        /// click on the player rubis coin to remove a coin
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lblChoiceRubis_Click(object sender, EventArgs e)
         {
             nbRubis--;
@@ -515,6 +532,11 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// click on the player saphir coin to remove a coin
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lblChoiceSaphir_Click(object sender, EventArgs e)
         {
             nbSaphir--;
@@ -528,6 +550,11 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// click on the player onyx coin to remove a coin
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lblChoiceOnyx_Click(object sender, EventArgs e)
         {
             nbOnyx--;
@@ -541,6 +568,11 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// click on the player emeraude coin to remove a coin
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lblChoiceEmeraude_Click(object sender, EventArgs e)
         {
             nbEmeraude--;
@@ -554,6 +586,11 @@ namespace Splendor
             }
         }
 
+        /// <summary>
+        /// click on the player diamand coin to remove a coin
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lblChoiceDiamand_Click(object sender, EventArgs e)
         {
             nbDiamand--;
