@@ -12,11 +12,12 @@ namespace Splendor
     /// </summary>
     class Card
     {
-        private Ressources ress;
-        private int prestigePt;
-        private int level;
-        //tableau : l'index correspond à l'énumération, la valeur à la ressource requise
-        private int[] cost = new int[4];
+        public Ressources ress { get; set; }
+        public int prestigePt { get; set; }
+		public int level { get; set; }
+
+		//tableau : l'index correspond à l'énumération, la valeur à la ressource requise
+		public int[] cost { get; set; } = new int[4];
 
 
         public Card(int level, int prestigePt, int[] cost, int ress)
@@ -25,69 +26,7 @@ namespace Splendor
             this.prestigePt = prestigePt;
             this.cost = cost;
             this.ress = (Ressources)ress;
-        }
-
-        /// <summary>
-        /// the precious stone that the card gives
-        /// </summary>
-        public Ressources Ress
-        {
-            get
-            {
-                return ress;
-            }
-            set
-            {
-                ress = value;
-            }
-
-        }
-
-        /// <summary>
-        /// number of prestige point of the card
-        /// </summary>
-        public int PrestigePt
-        {
-            get
-            {
-                return prestigePt;
-            }
-            set
-            {
-                prestigePt = value;
-            }
-
-        }
-
-        /// <summary>
-        /// level of the card : 1, 2 or 3
-        /// </summary>
-        public int Level
-        {
-            get
-            {
-                return level;
-            }
-            set
-            {
-                level = value;
-            }
-        }
-
-        /// <summary>
-        /// all the precious stones that are needed to buy the card
-        /// </summary>
-        public int[] Cost
-        {
-            get
-            {
-                return cost;
-            }
-            set
-            {
-                cost = value;
-            }
-        }
+        }        
 
         /// <summary>
         /// displays information about the card
@@ -97,7 +36,7 @@ namespace Splendor
         {
             string res = "";
 
-            res = Enum.GetName(typeof(Ressources), Ress);
+            res = Enum.GetName(typeof(Ressources), ress);
             //Be careful, those \t enables to split the string when clicking on a card
             res += "\t";
 
