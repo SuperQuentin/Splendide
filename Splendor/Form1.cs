@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file      frmAddVideoGames.cs
  * \author    F. Andolfatto
  * \version   1.0
@@ -60,8 +60,8 @@ namespace Splendor
         //used to store the number of coins available in the game
         private List<int> availableCoins = new List<int>() { 7, 7, 7, 7, 7 };
 
-
-
+        //used to store the number of the players
+        public string nbJoueurs = "";
 
         //boolean to enable us to know if the user can click on a coin or a card
         private bool enableClicLabel;
@@ -83,6 +83,12 @@ namespace Splendor
         /// <param name="e"></param>
         private void frmSplendor_Load(object sender, EventArgs e)
         {
+            InputBox("Nombre de joueurs", "Veuillez insérer le nombre de joueurs");
+
+            while(nbJoueurs == "" || int.Parse(nbJoueurs) > 4)
+            {
+                InputBox("Nombre de joueurs", "Veuillez insérer un nombre valide");
+            }
 
             allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
 
@@ -152,6 +158,37 @@ namespace Splendor
                     txtBox.Click += ClickOnCard;
                 }
             }
+        }
+
+        public DialogResult InputBox(string title, string promptText)
+        {
+            Form form = new Form();
+            Label label = new Label();
+            TextBox textBox = new TextBox();
+            Button buttonOk = new Button();
+
+            form.Text = title;
+            label.Text = promptText;
+
+            buttonOk.Text = "OK";
+            buttonOk.DialogResult = DialogResult.OK;
+
+            label.SetBounds(35, 20, 180, 13);
+            textBox.SetBounds(226, 17, 30, 20);
+            buttonOk.SetBounds(116, 65, 75, 23);
+
+            form.ClientSize = new Size(396, 107);
+            form.Controls.AddRange(new Control[] { label, textBox, buttonOk });
+            form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.AcceptButton = buttonOk;
+
+            DialogResult dialogResult = form.ShowDialog();
+            nbJoueurs = textBox.Text;
+            return dialogResult;
         }
 
         private void ClickOnCard(object sender, EventArgs e)
