@@ -38,16 +38,9 @@ namespace Splendor
             //Create and insert ressources
             CreateInsertRessources();
 
-<<<<<<< HEAD
             //Create and insert NbCoin
             CreateInsertNbCoin();
         }
-=======
-			ImportCardCsv();
-
-		}
->>>>>>> master
-
 
         /// <summary>
         /// get the list of cards according to the level
@@ -58,12 +51,7 @@ namespace Splendor
             var sql = "SELECT id,fkRessource,nbPtPrestige,level FROM card where level = " + level;
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-
-<<<<<<< HEAD
-            Stack<Card> listCard = new Stack<Card>();
-=======
             List<Card> listCard = new List<Card>();
->>>>>>> master
 
             while (reader.Read())
             {
@@ -78,12 +66,7 @@ namespace Splendor
                     cost.Add(int.Parse(costReader[0].ToString()));
                 }
 
-<<<<<<< HEAD
-                listCard.Push(new Card(int.Parse(reader["level"].ToString()), int.Parse(reader["nbPtPrestige"].ToString()), cost.ToArray(), int.Parse(reader["fkRessource"].ToString())));
-=======
                 listCard.Add(new Card(int.Parse(reader["level"].ToString()), int.Parse(reader["nbPtPrestige"].ToString()), cost.ToArray(), int.Parse(reader["fkRessource"].ToString())));
->>>>>>> master
-
             }
 
             return listCard;
@@ -184,11 +167,6 @@ namespace Splendor
             sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Diamand + ",\"diamand\")";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
-<<<<<<< HEAD
-=======
-
-
->>>>>>> master
         }
 
 
@@ -223,11 +201,7 @@ namespace Splendor
             var command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-<<<<<<< HEAD
             sql = "select last_insert_rowid()";
-=======
-            sql = "select last_insert_rowid() as last";
->>>>>>> master
             command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader read = command.ExecuteReader();
 
@@ -236,11 +210,7 @@ namespace Splendor
 
                 for (int i = 0; i < cost.Length; i++)
                 {
-<<<<<<< HEAD
                     sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + read[0] + "," + i + 1 + "," + cost[i] + ")";
-=======
-                    sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + read["last"] + "," + (i) + "," + cost[i] + ")";
->>>>>>> master
                     command = new SQLiteCommand(sql, m_dbConnection);
                     command.ExecuteNonQuery();
                 }
@@ -251,15 +221,9 @@ namespace Splendor
         /// <summary>
         /// Import card from csv to put in the database
         /// </summary>
-<<<<<<< HEAD
-        public void ImportCardCsv()
-        {
-            using (var reader = new StreamReader("./cards.csv"))
-=======
         public void ImportCardCsv(string csv = "./cards.csv")
         {
             using (var reader = new StreamReader(csv))
->>>>>>> master
             {
                 reader.ReadLine();
                 while (!reader.EndOfStream)

@@ -12,47 +12,21 @@ namespace Splendor
     /// </summary>
     class Card
     {
-<<<<<<< HEAD
         private Ressources ress;
         private int prestigePt;
         private int level;
         //tableau : l'index correspond à l'énumération, la valeur à la ressource requise
         private int[] cost = new int[4];
-
-
-        public Card(int level, int prestigePt, int[] cost, int ress)
-        {
-            this.level = level;
-            this.prestigePt = prestigePt;
-            this.cost = cost;
-            this.ress = (Ressources)ress;
-        }
-=======
-        public Ressources ress { get; set; }
-        public int prestigePt { get; set; }
-		public int level { get; set; }
->>>>>>> master
+        public Ressources Ress { get; set; }
+        public int PrestigePt { get; set; }
+		public int Level { get; set; }
 
 		//tableau : l'index correspond à l'énumération, la valeur à la ressource requise
-		public int[] cost { get; set; } = new int[4];
+		public int[] Cost { get; set; } = new int[4];
 
-
-<<<<<<< HEAD
         /// <summary>
         /// all the precious stones that are needed to buy the card
         /// </summary>
-        public int[] Cost
-        {
-            get
-            {
-                return cost;
-            }
-            set
-            {
-                cost = value;
-            }
-        }
-=======
         public Card(int level, int prestigePt, int[] cost, int ress)
         {
             this.level = level;
@@ -60,7 +34,7 @@ namespace Splendor
             this.cost = cost;
             this.ress = (Ressources)ress;
         }        
->>>>>>> master
+
 
         /// <summary>
         /// displays information about the card
@@ -70,11 +44,9 @@ namespace Splendor
         {
             string res = "";
 
-<<<<<<< HEAD
-            res = Enum.GetName(typeof(Ressources), Ress);
-=======
+
             res = Enum.GetName(typeof(Ressources), ress);
->>>>>>> master
+
             //Be careful, those \t enables to split the string when clicking on a card
             res += "\t";
 

@@ -33,7 +33,6 @@ namespace Splendor
         //Used to store textbox objects
         private List<List<TextBox>> gridCard = new List<List<TextBox>>();
 
-
         private List<List<Card>> gridCardStock;
 
         //Used to store ressources labels for the player
@@ -48,26 +47,29 @@ namespace Splendor
         //Used to store players objects
         private List<Player> players = new List<Player>();
 
-
         private List<int> nbCoinsSelected;
 
         //Id of the player that is playing
         private int currentPlayerId = 0;
 
-        private int id = 0;
-
-        //used to store the total number of coins
+        //Used to store the total number of coins
         private int totalCoins;
 
-        //used to store the number of coins available in the game
+        //Used to store the number of coins available in the game
         private List<int> availableCoins = new List<int>() { 7, 7, 7, 7, 7 };
 
+        //Used to store the number of the players
+        public string nbJoueurs = "";
 
+        //Used to store the names of the players
+        public List<string> nomJoueurs;
 
+        //Used to store an error if the name is empty
+        private string verifNom = "";
 
-        //boolean to enable us to know if the user can click on a coin or a card
+        //Boolean to enable us to know if the user can click on a coin or a card
         private bool enableClicLabel;
-        //connection to the database
+        //Connection to the database
         private ConnectionDB conn;
 
         /// <summary>
@@ -85,17 +87,43 @@ namespace Splendor
         /// <param name="e"></param>
         private void frmSplendor_Load(object sender, EventArgs e)
         {
+            //Appel de la fonction de seléction du nombre de joueurs
+            NbJoueurs("Nombre de joueurs", "Veuillez insérer le nombre de joueurs");
 
-            allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
+            //Vérifie si le nombre de joueurs est correct
+            while(nbJoueurs == "" || int.Parse(nbJoueurs) > 4)
+            {
+                NbJoueurs("Nombre de joueurs", "Veuillez insérer un nombre valide");
+            }
 
-<<<<<<< HEAD
-            //load cards from the database
-            Stack<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
-            //Go through the results
-            //Don't forget to check when you are at the end of the stack
-            
-            //fin TO DO
-=======
+            NomJoueurs("Nom des joueurs");
+
+            for (int i = 0; i < int.Parse(nbJoueurs); i++)
+            {
+                if(nomJoueurs[i] == "")
+                {
+                    verifNom = "vide";
+                }
+            }
+
+            do
+            {
+                verifNom = "";
+                NomJoueurs("Nom des joueurs");
+
+                for (int i = 0; i < int.Parse(nbJoueurs); i++)
+                {
+                    if (nomJoueurs[i] == "")
+                    {
+                        verifNom = "vide";
+                    }
+                }
+            } while (verifNom == "vide");
+
+
+
+                allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
+
             //Puts coins values in labels
             for (int x = 0; x < allRessourcesLbl.Count; x++)
             {
@@ -135,7 +163,6 @@ namespace Splendor
                     gridCardStock[x].RemoveAt(randomValue);
                 }
             }
->>>>>>> master
 
             this.Width = 680;
             this.Height = 540;
@@ -156,24 +183,6 @@ namespace Splendor
             cmdNextPlayer.Visible = false;
 
             //we wire the click on all cards to the same event
-<<<<<<< HEAD
-            txtLevel11.Click += ClickOnCard;
-            txtLevel12.Click += ClickOnCard;
-            txtLevel13.Click += ClickOnCard;
-            txtLevel14.Click += ClickOnCard;
-            txtLevel21.Click += ClickOnCard;
-            txtLevel22.Click += ClickOnCard;
-            txtLevel23.Click += ClickOnCard;
-            txtLevel24.Click += ClickOnCard;
-            txtLevel31.Click += ClickOnCard;
-            txtLevel32.Click += ClickOnCard;
-            txtLevel33.Click += ClickOnCard;
-            txtLevel34.Click += ClickOnCard;
-            txtNoble1.Click += ClickOnCard;
-            txtNoble2.Click += ClickOnCard;
-            txtNoble3.Click += ClickOnCard;
-            txtNoble4.Click += ClickOnCard;
-=======
             foreach (List<TextBox> txtBoxes in gridCard)
             {
                 foreach (TextBox txtBox in txtBoxes)
@@ -181,7 +190,92 @@ namespace Splendor
                     txtBox.Click += ClickOnCard;
                 }
             }
->>>>>>> master
+        }
+
+        public DialogResult NbJoueurs(string title, string promptText)
+        {
+            Form form = new Form();
+            Label label = new Label();
+            TextBox textBox = new TextBox();
+            Button buttonOk = new Button();
+
+            form.Text = title;
+            label.Text = promptText;
+
+            buttonOk.Text = "OK";
+            buttonOk.DialogResult = DialogResult.OK;
+
+            label.SetBounds(35, 20, 180, 13);
+            textBox.SetBounds(226, 17, 30, 20);
+            buttonOk.SetBounds(116, 65, 75, 23);
+
+            form.ClientSize = new Size(396, 107);
+            form.Controls.AddRange(new Control[] { label, textBox, buttonOk });
+            form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.AcceptButton = buttonOk;
+
+            DialogResult dialogResult = form.ShowDialog();
+            nbJoueurs = textBox.Text;
+            return dialogResult;
+        }
+
+        public DialogResult NomJoueurs(string title)
+        {
+            Form form = new Form();
+
+            Label label1 = new Label();
+            Label label2 = new Label();
+            Label label3 = new Label();
+            Label label4 = new Label();
+
+            TextBox textBox1 = new TextBox();
+            TextBox textBox2 = new TextBox();
+            TextBox textBox3 = new TextBox();
+            TextBox textBox4 = new TextBox();
+
+            Button buttonOk = new Button();
+
+            form.Text = title;
+
+            label1.Text = "Joueur 1 ";
+            label2.Text = "Joueur 2 ";
+            label3.Text = "Joueur 3 ";
+            label4.Text = "Joueur 4 ";
+
+            buttonOk.Text = "OK";
+            buttonOk.DialogResult = DialogResult.OK;
+
+            label1.SetBounds(35, 10, 50, 13);
+            label2.SetBounds(35, 30, 50, 13);
+            label3.SetBounds(35, 50, 50, 13);
+            label4.SetBounds(35, 70, 50, 13);
+
+            textBox1.SetBounds(100, 7, 100, 20);
+            textBox2.SetBounds(100, 27, 100, 20);
+            textBox3.SetBounds(100, 47, 100, 20);
+            textBox4.SetBounds(100, 67, 100, 20);
+
+            buttonOk.SetBounds(250, 65, 75, 23);
+
+            form.ClientSize = new Size(396, 107);
+            form.Controls.AddRange(new Control[] { label1, label2, label3, label4, textBox1, textBox2, textBox3, textBox4, buttonOk });
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.AcceptButton = buttonOk;
+
+            DialogResult dialogResult = form.ShowDialog();
+            nomJoueurs.Add(textBox1.Text);
+            nomJoueurs.Add(textBox2.Text);
+            nomJoueurs.Add(textBox3.Text);
+            nomJoueurs.Add(textBox4.Text);
+
+            return dialogResult;
         }
 
         private void ClickOnCard(object sender, EventArgs e)
@@ -206,13 +300,9 @@ namespace Splendor
         {
             this.Width = 680;
             this.Height = 780;
-<<<<<<< HEAD
-           
-=======
 
             int id = 0;
 
->>>>>>> master
             LoadPlayer(id);
         }
 
@@ -238,29 +328,6 @@ namespace Splendor
             lblChoiceCard.Text = "";
 
             //no coins selected
-<<<<<<< HEAD
-            nbDiamand = 0;
-            nbOnyx = 0;
-            nbRubis = 0;
-            nbSaphir = 0;
-            nbEmeraude = 0;
-
-            Player player = new Player();
-            player.Name = name;
-            player.Id = id;
-            player.Ressources = new int[] { 2, 0, 1, 1, 1 };
-            player.Coins = conn.GetPlayerCoins(id);
-
-            lblPlayerRubisCoin.Text = player.Coins[0].ToString();
-            lblPlayerEmeraudeCoin.Text = player.Coins[1].ToString();
-            lblPlayerOnyxCoin.Text = player.Coins[2].ToString();
-            lblPlayerSaphirCoin.Text = player.Coins[3].ToString();
-            lblPlayerDiamandCoin.Text = player.Coins[4].ToString();
-
-            currentPlayerId = id;
-
-            lblPlayer.Text = "Jeu de " + name;
-=======
             nbCoinsSelected = new List<int>() { 0, 0, 0, 0, 0 };
 
             //Add different player in a list
@@ -276,7 +343,6 @@ namespace Splendor
             }
 
             lblPlayer.Text = "Jeu de " + players[currentPlayerId].name;
->>>>>>> master
 
             cmdPlay.Enabled = false;
         }
@@ -379,24 +445,6 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-<<<<<<< HEAD
-            totalCoins = nbRubis + nbSaphir + nbOnyx + nbEmeraude +nbDiamand;
-
-            if (totalCoins > 1)
-            {
-
-
-                //coins reset
-                nbDiamand = 0;
-                nbOnyx = 0;
-                nbRubis = 0;
-                nbSaphir = 0;
-                nbEmeraude = 0;
-
-                cmdNextPlayer.Visible = true;
-                cmdNextPlayer.Enabled = true;
-            }          
-=======
             totalCoins = nbCoinsSelected.Sum();
 
             if (totalCoins > 1)
@@ -411,7 +459,6 @@ namespace Splendor
                 cmdNextPlayer.Visible = true;
                 cmdNextPlayer.Enabled = true;
             }
->>>>>>> master
         }
 
         /// <summary>
@@ -431,14 +478,6 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdNextPlayer_Click(object sender, EventArgs e)
         {
-            if(id == 2)
-            {
-                id = 0;
-            }
-            else
-            {
-                id++;
-            }
             //TO DO in release 1.0 : 3 is hard coded (number of players for the game), it shouldn't. 
             //TO DO Get the id of the player : in release 0.1 there are only 3 players
             //Reload the data of the player
@@ -446,16 +485,7 @@ namespace Splendor
 
         }
 
-<<<<<<< HEAD
-        /// <summary>
-        /// click on the player rubis coin to remove a coin
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void lblChoiceRubis_Click(object sender, EventArgs e)
-=======
         private void coinsTaker(List<int> selectCoins, List<int> availableRessources, Ressources witchRessource)
->>>>>>> master
         {
             selectCoins[(int)witchRessource]--;
             availableRessources[(int)witchRessource]++;
@@ -469,19 +499,11 @@ namespace Splendor
         }
 
         /// <summary>
-<<<<<<< HEAD
-        /// click on the player saphir coin to remove a coin
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void lblChoiceSaphir_Click(object sender, EventArgs e)
-=======
         /// click on the player rubis coin to remove a coin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void lblChoiceRubis_Click(object sender, EventArgs e)
->>>>>>> master
         {
             coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Rubis);
         }
