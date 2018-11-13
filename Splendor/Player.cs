@@ -17,6 +17,13 @@ namespace Splendor
         public int[] ressources { get; set; }
         public int[] coins { get; set; }
 
+
+		/// <summary>
+		/// Construtor : initialize player with is different stats
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="name"></param>
+		/// <param name="ressources"></param>
 		public Player(int id, string name, int[] ressources = null)
 		{
 			this.id = id;
@@ -28,6 +35,11 @@ namespace Splendor
 			}
 
 			this.ressources = ressources;
-		}  	
-    }
+		}
+
+		public override string ToString()
+		{
+			return this.id + " - " + this.name;
+		}
+	}
 }

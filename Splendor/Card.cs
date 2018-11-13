@@ -19,7 +19,13 @@ namespace Splendor
 		//tableau : l'index correspond à l'énumération, la valeur à la ressource requise
 		public int[] cost { get; set; } = new int[4];
 
-
+		/// <summary>
+		/// Constructor : initialize card with is different stats
+		/// </summary>
+		/// <param name="level"></param>
+		/// <param name="prestigePt"></param>
+		/// <param name="cost"></param>
+		/// <param name="ress"></param>
         public Card(int level, int prestigePt, int[] cost, int ress)
         {
             this.level = level;

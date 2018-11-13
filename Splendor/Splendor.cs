@@ -31,7 +31,7 @@ namespace Splendor
         private Random rand = new Random();
 
         //Used to store textbox objects
-        private List<List<TextBox>> gridCard = new List<List<TextBox>>();
+        private List<List<TextBox>> gridCard;
 
 
         private List<List<Card>> gridCardStock;
@@ -46,7 +46,7 @@ namespace Splendor
         private List<Label> allRessourcesLblPlayer;
 
         //Used to store players objects
-        private List<Player> players = new List<Player>();
+        private List<Player> players;
 
 
         private List<int> nbCoinsSelected;
@@ -58,13 +58,13 @@ namespace Splendor
         private int totalCoins;
 
         //used to store the number of coins available in the game
-        private List<int> availableCoins = new List<int>() { 7, 7, 7, 7, 7 };
+        private List<int> availableCoins;
+
+		PlayersForm playersForm;
 
 
-
-
-        //boolean to enable us to know if the user can click on a coin or a card
-        private bool enableClicLabel;
+		//boolean to enable us to know if the user can click on a coin or a card
+		private bool enableClicLabel;
         //connection to the database
         private ConnectionDB conn;
 
@@ -74,7 +74,14 @@ namespace Splendor
         public frmSplendor()
         {
             InitializeComponent();
-        }
+
+			//Initialize a connection with the sqlite database
+			conn = new ConnectionDB(true);
+
+			gridCard = new List<List<TextBox>>();
+			players = new List<Player>();
+			availableCoins = new List<int>() { 7, 7, 7, 7, 7 };
+		}
 
         /// <summary>
         /// loads the form and initialize data in it
@@ -83,7 +90,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void frmSplendor_Load(object sender, EventArgs e)
         {
-
+			//Stock Ressources label objects
             allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
 
             //Puts coins values in labels
@@ -97,16 +104,17 @@ namespace Splendor
             gridCard.Add(new List<TextBox>() { txtLevel31, txtLevel32, txtLevel33, txtLevel34 });
             gridCard.Add(new List<TextBox>() { txtNoble1, txtNoble2, txtNoble3, txtNoble4 });
 
+
             foreach (List<TextBox> txtBoxes in gridCard)
             {
                 foreach (TextBox txtBox in txtBoxes)
                 {
                     txtBox.ReadOnly = true;
-                }
+					txtBox.Click += ClickOnCard; //we wire the click on all cards to the same event
+				}
             }
 
-            //Initialize a connection with the sqlite database
-            conn = new ConnectionDB();
+            
 
             //load cards from the database
             List<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
@@ -120,7 +128,7 @@ namespace Splendor
             {
                 for (int y = 0; y < gridCard[x].Count; y++)
                 {
-                    var randomValue = rand.Next((gridCardStock[x].Count()) - 1);
+                    var randomValue = rand.Next((gridCardStock[x].Count()));
                     gridCard[x][y].Text = gridCardStock[x].ElementAt(randomValue).ToString();
                     gridCardStock[x].RemoveAt(randomValue);
                 }
@@ -144,14 +152,6 @@ namespace Splendor
             cmdValidateChoice.Visible = false;
             cmdNextPlayer.Visible = false;
 
-            //we wire the click on all cards to the same event
-            foreach (List<TextBox> txtBoxes in gridCard)
-            {
-                foreach (TextBox txtBox in txtBoxes)
-                {
-                    txtBox.Click += ClickOnCard;
-                }
-            }
         }
 
         private void ClickOnCard(object sender, EventArgs e)
@@ -177,51 +177,12 @@ namespace Splendor
             this.Width = 680;
             this.Height = 780;
 
-            int id = 0;
+			cmdInsertPlayer.Enabled = false;
+			cmdPlay.Enabled = false;
 
-            LoadPlayer(id);
+			Program.ConsoleColor("The game starting", ConsoleColor.Green);
         }
 
-
-        /// <summary>
-        /// load data about the current player
-        /// </summary>
-        /// <param name="id">identifier of the player</param>
-        private void LoadPlayer(int id)
-        {
-
-            this.currentPlayerId = id;
-
-            enableClicLabel = true;
-
-            //no coins or card selected yet, labels are empty
-
-            foreach (Label lblChoice in allRessourcesLblChoice)
-            {
-                lblChoice.Text = "";
-            }
-
-            lblChoiceCard.Text = "";
-
-            //no coins selected
-            nbCoinsSelected = new List<int>() { 0, 0, 0, 0, 0 };
-
-            //Add different player in a list
-            players.Add(new Player(0, conn.GetPlayerName(0)));
-            players.Add(new Player(1, conn.GetPlayerName(1)));
-            players.Add(new Player(2, conn.GetPlayerName(2)));
-
-            allRessourcesLblPlayer = new List<Label>() { lblPlayerRubisCoin, lblPlayerEmeraudeCoin, lblPlayerOnyxCoin, lblPlayerSaphirCoin, lblPlayerDiamandCoin };
-
-            for (int x = 0; x < allRessourcesLblPlayer.Count; x++)
-            {
-                allRessourcesLblPlayer[x].Text = players[currentPlayerId].ressources[x].ToString();
-            }
-
-            lblPlayer.Text = "Jeu de " + players[currentPlayerId].name;
-
-            cmdPlay.Enabled = false;
-        }
 
         /// <summary>
         /// Check if the coins can take
@@ -344,8 +305,9 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdInsertPlayer_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("A implémenter");
-        }
+			playersForm = new PlayersForm();
+			playersForm.Show();
+		}
 
         /// <summary>
         /// click on the next player to tell him it is his turn
