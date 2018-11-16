@@ -8,7 +8,7 @@ namespace Splendor
 {
 
     /// <summary>
-    /// class Player : attributes and methods to deal with a player
+    /// Class Player : attributes and methods to deal with a player
     /// </summary>
     class Player
     {
@@ -19,7 +19,7 @@ namespace Splendor
 
 
 		/// <summary>
-		/// Construtor : initialize player with is different stats
+		/// Construtor : initialize player with his different stats
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="name"></param>

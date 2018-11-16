@@ -10,17 +10,17 @@ using System.Windows.Forms;
 namespace Splendor
 {
     /// <summary>
-    /// contains methods and attributes to connect and deal with the database
+    /// Contains methods and attributes to connect and deal with the database
     /// TO DO : le modèle de données n'est pas super, à revoir!!!!
     /// </summary>
     class ConnectionDB
     {
-        //connection to the database
+        //Connection to the database
         private SQLiteConnection m_dbConnection;
         private List<Card> allCards = new List<Card>();
 
         /// <summary>
-        /// constructor : creates the connection to the database SQLite
+        /// Constructor : creates the connection to the database SQLite
         /// </summary>
         public ConnectionDB(bool showDBReNew = false)
         {
@@ -74,7 +74,7 @@ namespace Splendor
 			m_dbConnection.Open();
 			Program.ConsoleColor("New Connection established", ConsoleColor.Green);
 
-			//create and insert players
+			//Create and insert players
 			CreatePlayerTable();
 
 			//Create and insert cards
@@ -90,7 +90,7 @@ namespace Splendor
 		}
 
 		/// <summary>
-		/// Execute the sql commande
+		/// Execute the sql command
 		/// </summary>
 		/// <param name="sqlRequest"></param>
 		/// <param name="dbConnection"></param>
@@ -117,7 +117,7 @@ namespace Splendor
 		}
 
         /// <summary>
-        /// get the list of cards according to the level
+        /// Get the list of cards according to the level
         /// </summary>
         /// <returns>cards stack</returns>
         public List<Card> GetListCardAccordingToLevel(int level)
@@ -128,7 +128,6 @@ namespace Splendor
 
             while (reader.Read())
             {
-
 				SQLiteDataReader costReader = ExecNonQuery("select cost.nbRessource FROM cost where cost.fkCard = " + reader["id"].ToString(), m_dbConnection);
 
                 var cost = new List<int>();
@@ -139,7 +138,6 @@ namespace Splendor
                 }
 
                 listCard.Add(new Card(int.Parse(reader["level"].ToString()), int.Parse(reader["nbPtPrestige"].ToString()), cost.ToArray(), int.Parse(reader["fkRessource"].ToString())));
-
             }
 
             return listCard;
@@ -149,7 +147,7 @@ namespace Splendor
 
 
         /// <summary>
-        /// create the "player" table and insert data
+        /// Create the "player" table and insert data
         /// </summary>
         private void CreatePlayerTable()
         {
@@ -165,7 +163,7 @@ namespace Splendor
 
 
         /// <summary>
-        /// get the name of the player according to his id
+        /// Get the name of the player according to his id
         /// </summary>
         /// <param name="id">id of the player</param>
         /// <returns></returns>
@@ -184,7 +182,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// create the table "ressources" and insert data
+        /// Create the table "ressources" and insert data
         /// </summary>
         private void CreateInsertRessourcesTable()
         {
@@ -224,7 +222,7 @@ namespace Splendor
 
 
         /// <summary>
-        ///  create tables "cards", "cost" and insert data
+        /// Create tables "cards", "cost" and insert data
         /// </summary>
         private void CreateInsertCardsTable()
         {
@@ -298,19 +296,19 @@ namespace Splendor
 
 				OpenFileDialog openFileDialog = new OpenFileDialog(); //Ask a file to read
 
-				while (!File.Exists(csvPath))//Check if the selected file exists 
+				while (!File.Exists(csvPath)) //Check if the selected file exists 
 				{
 					if (openFileDialog.ShowDialog() == DialogResult.OK)
 					{
-						csvPath = openFileDialog.FileName;//Recover the file path
+						csvPath = openFileDialog.FileName; //Recover the file path
 						Program.ConsoleColor("Fichier csv chargé",ConsoleColor.Green);
 					}					
 				}
-				reader = File.ReadAllLines(csvPath);//Finaly read all line in the file
+				reader = File.ReadAllLines(csvPath); //Finaly read all line in the file
 			}
 			finally
 			{
-				foreach (var line in reader.Skip(1))//Going to read all line and skip the first one
+				foreach (var line in reader.Skip(1)) //Going to read all line and skip the first one
 				{
 					string[] values = line.Split(';');
 					var newValues = new int[8];
@@ -320,12 +318,11 @@ namespace Splendor
 						newValues[x] = int.Parse(values[x].ToString() == "" ? "0" : values[x].ToString());
 					}
 
-					//Add card to the sqlite database
+					//Add the card to the sqlite database
 					this.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
 					Program.ConsoleColor("New card was add to the database", ConsoleColor.Green);
 				}
 			}
         }
-
     }
 }

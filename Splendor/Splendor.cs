@@ -23,18 +23,20 @@ using System.Windows.Forms;
 namespace Splendor
 {
     /// <summary>
-    /// manages the form that enables to play with the Splendor
+    /// Manages the form that enables to play with the Splendor
     /// </summary>
     public partial class frmSplendor : Form
     {
-
+        //Random variable for generate random values
         private Random rand = new Random();
 
         //Used to store textbox objects
         private List<List<TextBox>> gridCard;
 
+        //Content of the selected card by the player
 		private string cardSelect;
 
+        //Grid of all cards order by levels
         private List<List<Card>> gridCardStock;
 
         //Used to store ressources labels for the player
@@ -46,28 +48,29 @@ namespace Splendor
         //Used to store ressources labels for the player coins
         private List<Label> allRessourcesLblPlayer;
 
-        //Used to store players objects
+        //Used to store players
         private List<Player> players;
 
-
+        //Used to store the value of the selected coins
         private List<int> nbCoinsSelected;
 
         //Id of the player that is playing
         private int currentPlayerId = 0;
 
-        //used to store the total number of coins
+        //Used to store the total number of coins
         private int totalCoins;
 
-        //used to store the number of coins available in the game
+        //Used to store the number of coins available in the game
         private List<int> availableCoins;
 
+        //Form for CRUD players
 		PlayersForm playersForm;
 
         //connection to the database
         private ConnectionDB conn;
 
         /// <summary>
-        /// constructor
+        /// Constructor
         /// </summary>
         public frmSplendor()
         {
@@ -83,16 +86,19 @@ namespace Splendor
 		}
 
         /// <summary>
-        /// loads the form and initialize data in it
+        /// Loads the form and initialize data in it
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void frmSplendor_Load(object sender, EventArgs e)
         {
-			//Stock Ressources label objects
+			//Stock ressources labels
             allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
-			allRessourcesLblPlayer = new List<Label>() { lblPlayerRubisCoin, lblPlayerEmeraudeCoin, lblPlayerOnyxCoin, lblPlayerSaphirCoin, lblPlayerDiamandCoin };
 
+            //Stock ressources labels of the player
+            allRessourcesLblPlayer = new List<Label>() { lblPlayerRubisCoin, lblPlayerEmeraudeCoin, lblPlayerOnyxCoin, lblPlayerSaphirCoin, lblPlayerDiamandCoin };
+
+            //Activate ressources labels
 			foreach (Label lblCoin in allRessourcesLbl)
 			{
 				lblCoin.Enabled = false;
@@ -104,29 +110,29 @@ namespace Splendor
                 allRessourcesLbl[x].Text = availableCoins[x].ToString();
             }
 
+            //Add textbox to the grid according by levels
             gridCard.Add(new List<TextBox>() { txtLevel11, txtLevel12, txtLevel13, txtLevel14 });
             gridCard.Add(new List<TextBox>() { txtLevel21, txtLevel22, txtLevel23, txtLevel24 });
             gridCard.Add(new List<TextBox>() { txtLevel31, txtLevel32, txtLevel33, txtLevel34 });
             gridCard.Add(new List<TextBox>() { txtNoble1, txtNoble2, txtNoble3, txtNoble4 });
 
-
+            //Add the click event to all cardtiles
             foreach (List<TextBox> txtBoxes in gridCard)
             {
                 foreach (TextBox txtBox in txtBoxes)
                 {
                     txtBox.ReadOnly = true;
-					txtBox.Click += ClickOnCard; //we wire the click on all cards to the same event
+					txtBox.Click += ClickOnCard; //We wire the click on all cards to the same event
 				}
-            }
+            }            
 
-            
-
-            //load cards from the database
+            //Load cards from the database
             List<Card> listCardOne = conn.GetListCardAccordingToLevel(1);
             List<Card> listCardTwo = conn.GetListCardAccordingToLevel(2);
             List<Card> listCardThree = conn.GetListCardAccordingToLevel(3);
             List<Card> listNoble = conn.GetListCardAccordingToLevel(4);
 
+            //Add cards to the grid according by levels 
             gridCardStock = new List<List<Card>>() { listCardOne, listCardTwo, listCardThree, listNoble };
 
             for (int x = 0; x < gridCard.Count; x++)
@@ -142,7 +148,6 @@ namespace Splendor
             this.Width = 680;
             this.Height = 540;
 
-
             //Initialize a list with ressources labels
             allRessourcesLblChoice = new List<Label>() { lblChoiceRubis, lblChoiceEmeraude, lblChoiceOnyx, lblChoiceSaphir, lblChoiceDiamand };
 
@@ -157,6 +162,11 @@ namespace Splendor
 
         }
 
+        /// <summary>
+        /// The card select function
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClickOnCard(object sender, EventArgs e)
         {
 			if (nbCoinsSelected.Sum() == 0 && cmdPlay.Enabled == false)
@@ -165,7 +175,7 @@ namespace Splendor
 
 				var cardInfo = txtBox.Text.Split('\t');
 
-				//TODO : Splite card
+				//TODO : Split card
 
 				List<int> cost = new List<int>() { 2,0,0,0,0 };
 				bool[] y = new bool[5] { false, false, false, false, false};
@@ -182,7 +192,7 @@ namespace Splendor
 				if (y.All(x => x == true))
 				{
 					cardSelect = txtBox.Text;
-					lblChoiceCard.Text = "Carte choisi";
+					lblChoiceCard.Text = "Carte séléctionnée";
 					cmdValidateChoice.Enabled = true;
 				}
 				else
@@ -200,43 +210,51 @@ namespace Splendor
         }
 
         /// <summary>
-        /// click on the play button
+        /// Click on the play button
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cmdPlay_Click(object sender, EventArgs e)
         {
-            this.Width = 680;
-            this.Height = 780;
+            LoadPlayer();
+            if (players.Count > 0)
+            {
+                this.Width = 680;
+                this.Height = 780;
 
-			cmdInsertPlayer.Enabled = false;
-			cmdPlay.Enabled = false;
+                cmdInsertPlayer.Enabled = false;
+                cmdPlay.Enabled = false;
 
-			LoadPlayer();
+                
 
-			foreach(Label lblCoin in allRessourcesLbl)
-			{
-				lblCoin.Text = "7";
-				lblCoin.Enabled = true;
-			}
+                foreach (Label lblCoin in allRessourcesLbl)
+                {
+                    lblCoin.Text = "7";
+                    lblCoin.Enabled = true;
+                }
 
-			foreach (Label lblCoinChoice in allRessourcesLblChoice)
-			{
-				lblCoinChoice.Text = "0";
-			}
+                foreach (Label lblCoinChoice in allRessourcesLblChoice)
+                {
+                    lblCoinChoice.Text = "0";
+                }
 
-			foreach(Label lblCoinPlayer in allRessourcesLblPlayer)
-			{
-				lblCoinPlayer.Text = "0";
-			}
+                foreach (Label lblCoinPlayer in allRessourcesLblPlayer)
+                {
+                    lblCoinPlayer.Text = "0";
+                }
 
 
-			PlayerTurn(players[currentPlayerId]);
+                PlayerTurn(players[currentPlayerId]);
 
-			Program.ConsoleColor("The game starting", ConsoleColor.Green);
+                Program.ConsoleColor("The game starting", ConsoleColor.Green);
+            }
 
 		}
 
+        /// <summary>
+        /// Loads the player coins and shows his name
+        /// </summary>
+        /// <param name="player"></param>
 		private void PlayerTurn(Player player)
 		{
 			lblPlayer.Text = "Jeu du joueur : " + player.name;
@@ -249,6 +267,9 @@ namespace Splendor
 			cmdNextPlayer.Enabled = false;
 		}
 
+        /// <summary>
+        /// Initiate the players
+        /// </summary>
 		private void LoadPlayer()
 		{
 			cmdNextPlayer.Enabled = false;
@@ -279,6 +300,7 @@ namespace Splendor
 
 			totalCoins = selectCoins.Sum() - selectCoins[res];
 
+            //Test if the ressources can be taken
 			if (availableRessources[res] == 2)
 			{
 				MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
@@ -357,7 +379,7 @@ namespace Splendor
         }
 
         /// <summary>
-        /// click on the validate button to approve the selection of coins or card
+        /// Click on the validate button to approve the selection of coins or card
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -372,7 +394,7 @@ namespace Splendor
 					players[currentPlayerId].coins[x] += nbCoinsSelected[x];
 				}
 
-				//coins reset
+				//Coins reset
 				foreach (Label lblCoins in allRessourcesLblChoice)
 				{
 					lblCoins.Text = "0";
@@ -391,8 +413,7 @@ namespace Splendor
             }
 			else
 			{
-				//TODO
-				
+				//Todo
 			}
         }
 
@@ -433,6 +454,12 @@ namespace Splendor
 
         }
 
+        /// <summary>
+        /// Put back coin choice to the coins bank
+        /// </summary>
+        /// <param name="selectCoins"></param>
+        /// <param name="availableRessources"></param>
+        /// <param name="witchRessource"></param>
         private void coinsTaker(List<int> selectCoins, List<int> availableRessources, Ressources witchRessource)
         {
 			if (selectCoins.Sum() <= 2)

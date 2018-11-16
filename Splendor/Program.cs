@@ -20,7 +20,7 @@ namespace Splendor
         }
 
 		/// <summary>
-		/// Write with color in the console, this is maily for logs
+		/// Write with color in the console, this is mainly for logs
 		/// </summary>
 		/// <param name="msg">The message who want write</param>
 		/// <param name="color">The color of text for default is red</param>
