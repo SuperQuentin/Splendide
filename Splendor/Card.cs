@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Splendor
 {
     /// <summary>
-    /// class Card : attributes and methods to deal with a card
+    /// Class Card : attributes and methods to deal with a card
     /// </summary>
     class Card
     {
@@ -16,10 +16,16 @@ namespace Splendor
         public int prestigePt { get; set; }
 		public int level { get; set; }
 
-		//tableau : l'index correspond à l'énumération, la valeur à la ressource requise
+        //Array : the index of the enum ressource
 		public int[] cost { get; set; } = new int[4];
 
-
+		/// <summary>
+		/// Constructor : initialize card with is different stats
+		/// </summary>
+		/// <param name="level"></param>
+		/// <param name="prestigePt"></param>
+		/// <param name="cost"></param>
+		/// <param name="ress"></param>
         public Card(int level, int prestigePt, int[] cost, int ress)
         {
             this.level = level;
@@ -29,7 +35,7 @@ namespace Splendor
         }        
 
         /// <summary>
-        /// displays information about the card
+        /// Displays information about the card
         /// </summary>
         /// <returns></returns>
         public override string ToString()

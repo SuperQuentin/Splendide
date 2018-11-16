@@ -5,61 +5,130 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Splendor
 {
     /// <summary>
-    /// contains methods and attributes to connect and deal with the database
+    /// Contains methods and attributes to connect and deal with the database
     /// TO DO : le modèle de données n'est pas super, à revoir!!!!
     /// </summary>
     class ConnectionDB
     {
-        //connection to the database
+        //Connection to the database
         private SQLiteConnection m_dbConnection;
         private List<Card> allCards = new List<Card>();
 
         /// <summary>
-        /// constructor : creates the connection to the database SQLite
+        /// Constructor : creates the connection to the database SQLite
         /// </summary>
-        public ConnectionDB()
+        public ConnectionDB(bool showDBReNew = false)
         {
+			create:
+			try
+			{
+				if (!File.Exists("Splendor.sqlite"))
+				{
+					SQLiteConnection.CreateFile("Splendor.sqlite");
+					this.Initiate();
+				}
+				else if(showDBReNew)
+				{
+					DialogResult dialogResult = MessageBox.Show("Voulez-vous régénérer la base de donnée ?", "Reload", MessageBoxButtons.YesNo);
 
-            SQLiteConnection.CreateFile("Splendor.sqlite");
+					if (dialogResult == DialogResult.Yes) {
+						File.Delete("Splendor.sqlite");
+						SQLiteConnection.CreateFile("Splendor.sqlite");
+						this.Initiate();
+					}
+					else
+					{
+						m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
+						m_dbConnection.Open();
+						Program.ConsoleColor("New Connection established", ConsoleColor.Green);
+					}
+				}
+				else
+				{
+					m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
+					m_dbConnection.Open();
+					Program.ConsoleColor("New Connection established", ConsoleColor.Green);
+				}
+			}
+			catch(Exception e)
+			{
+				Program.ConsoleColor(e.Message);
+				MessageBox.Show("Veuillez fermer le fichier");
+				goto create;
+			}
 
-            m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
-            m_dbConnection.Open();
-
-            //create and insert players
-            CreateInsertPlayer();
-            //Create and insert cards
-            //TO DO
-            CreateInsertCards();
-            //Create and insert ressources
-            //TO DO
-            CreateInsertRessources();
-
-			ImportCardCsv();
-
+			
 		}
 
+		/// <summary>
+		/// Connect to database and create principal table
+		/// </summary>
+		private void Initiate()
+		{
+			m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
+			m_dbConnection.Open();
+			Program.ConsoleColor("New Connection established", ConsoleColor.Green);
+
+			//Create and insert players
+			CreatePlayerTable();
+
+			//Create and insert cards
+			CreateInsertCardsTable();
+
+			//Create and insert ressources
+			CreateInsertRessourcesTable();
+
+			//Import card from a csv to send it to the database
+			ImportCardCsv();
+
+			Program.ConsoleColor("Database initialize", ConsoleColor.Green);
+		}
+
+		/// <summary>
+		/// Execute the sql command
+		/// </summary>
+		/// <param name="sqlRequest"></param>
+		/// <param name="dbConnection"></param>
+		/// <returns></returns>
+		private SQLiteDataReader ExecNonQuery(string sqlRequest, SQLiteConnection dbConnection)
+		{
+			SQLiteCommand command = new SQLiteCommand(sqlRequest, dbConnection);
+			return command.ExecuteReader();
+		}
+
+		/// <summary>
+		/// Delete and Update with the new value the table players
+		/// </summary>
+		/// <param name="players"></param>
+		public void UpdatePlayers(List<Player> players)
+		{
+			ExecNonQuery("DELETE FROM 'player'", m_dbConnection);
+			ExecNonQuery("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='player'",m_dbConnection);
+			foreach (Player player in players)
+			{
+				this.ExecNonQuery("INSERT INTO player (pseudo) values('" + player.name + "')", m_dbConnection);
+			}
+			
+		}
 
         /// <summary>
-        /// get the list of cards according to the level
+        /// Get the list of cards according to the level
         /// </summary>
         /// <returns>cards stack</returns>
         public List<Card> GetListCardAccordingToLevel(int level)
         {
-            var sql = "SELECT id,fkRessource,nbPtPrestige,level FROM card where level = " + level;
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+			SQLiteDataReader reader = ExecNonQuery("SELECT id,fkRessource,nbPtPrestige,level FROM card where level = " + level, m_dbConnection);
 
-            List<Card> listCard = new List<Card>();
+			List<Card> listCard = new List<Card>();
 
             while (reader.Read())
             {
-                sql = "select cost.nbRessource FROM cost where cost.fkCard = " + reader["id"].ToString();
-                SQLiteCommand costCommand = new SQLiteCommand(sql, m_dbConnection);
-                SQLiteDataReader costReader = costCommand.ExecuteReader();
+				SQLiteDataReader costReader = ExecNonQuery("select cost.nbRessource FROM cost where cost.fkCard = " + reader["id"].ToString(), m_dbConnection);
 
                 var cost = new List<int>();
 
@@ -69,62 +138,65 @@ namespace Splendor
                 }
 
                 listCard.Add(new Card(int.Parse(reader["level"].ToString()), int.Parse(reader["nbPtPrestige"].ToString()), cost.ToArray(), int.Parse(reader["fkRessource"].ToString())));
-
             }
 
             return listCard;
         }
 
 
+
+
         /// <summary>
-        /// create the "player" table and insert data
+        /// Create the "player" table and insert data
         /// </summary>
-        private void CreateInsertPlayer()
+        private void CreatePlayerTable()
         {
-            string sql = "CREATE TABLE player (id INT PRIMARY KEY, pseudo VARCHAR(20))";
+			Program.ConsoleColor("Baking player table", ConsoleColor.Yellow);
+
+			string sql = "CREATE TABLE player (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudo VARCHAR(20))";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            sql = "insert into player (id, pseudo) values (0, 'Fred')";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-            sql = "insert into player (id, pseudo) values (1, 'Harry')";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-            sql = "insert into player (id, pseudo) values (2, 'Sam')";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
+			Program.ConsoleColor("Player table is coocked", ConsoleColor.Green);
+
         }
 
 
         /// <summary>
-        /// get the name of the player according to his id
+        /// Get the name of the player according to his id
         /// </summary>
         /// <param name="id">id of the player</param>
         /// <returns></returns>
-        public string GetPlayerName(int id)
+        public List<Player> GetPlayers()
         {
-            string sql = "select pseudo from player where id = " + id;
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            string name = "";
-            while (reader.Read())
-            {
-                name = reader["pseudo"].ToString();
-            }
-            return name;
+			SQLiteDataReader reader = ExecNonQuery("select id,pseudo from player", this.m_dbConnection);
+
+			List<Player> players = new List<Player>();
+
+			while (reader.Read())
+			{
+				players.Add(new Player(reader["pseudo"].ToString(),new int[5], int.Parse(reader["id"].ToString())));
+			}
+
+			return players;
         }
 
         /// <summary>
-        /// create the table "ressources" and insert data
+        /// Create the table "ressources" and insert data
         /// </summary>
-        private void CreateInsertRessources()
+        private void CreateInsertRessourcesTable()
         {
-            string sql = "CREATE TABLE ressource (id INTEGER PRIMARY KEY, name VARCHAR(20))";
+			Program.ConsoleColor("Baking ressource table", ConsoleColor.Yellow);
+
+			string sql = "CREATE TABLE ressource (id INTEGER PRIMARY KEY, name VARCHAR(20))";
             var command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Rubis + ",\"rubis\")";
+			Program.ConsoleColor("Player table is coocked", ConsoleColor.Green);
+
+			Program.ConsoleColor("Inserting ressource values", ConsoleColor.Yellow);
+
+			sql = "INSERT INTO ressource (id,name) values(" + (int)Ressources.Rubis + ",\"rubis\")";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
@@ -144,24 +216,33 @@ namespace Splendor
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
+			Program.ConsoleColor("Values has been insert", ConsoleColor.Green);
 
-        }
+		}
 
 
         /// <summary>
-        ///  create tables "cards", "cost" and insert data
+        /// Create tables "cards", "cost" and insert data
         /// </summary>
-        private void CreateInsertCards()
+        private void CreateInsertCardsTable()
         {
-            string sql = "CREATE TABLE card (id INTEGER PRIMARY KEY, fkRessource INT, level INT, nbPtPrestige INT, fkPlayer INT)";
+			Program.ConsoleColor("Baking card table", ConsoleColor.Yellow);
+
+			string sql = "CREATE TABLE card (id INTEGER PRIMARY KEY, fkRessource INT, level INT, nbPtPrestige INT, fkPlayer INT)";
             var command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            sql = "CREATE TABLE cost (id INTEGER PRIMARY KEY, fkCard INT, fkRessource INT, nbRessource INT)";
+			Program.ConsoleColor("Player card is coocked", ConsoleColor.Green);
+
+			Program.ConsoleColor("Baking cost table", ConsoleColor.Yellow);
+
+			sql = "CREATE TABLE cost (id INTEGER PRIMARY KEY, fkCard INT, fkRessource INT, nbRessource INT)";
             command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-        }
+			Program.ConsoleColor("Player cost is coocked", ConsoleColor.Green);
+
+		}
 
 
 
@@ -175,20 +256,21 @@ namespace Splendor
         /// <param name="player"></param>
         public void AddCard(int level, int ressource, int prestige, int[] cost, int player = 0)
         {
+			//Insert the card in the table card on the database
             var sql = "INSERT INTO card(fkRessource,level,nbPtPrestige) values(" + ressource + ", " + level + "," + prestige + ")";
             var command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
-            sql = "select last_insert_rowid() as last";
-            command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader read = command.ExecuteReader();
+			//Select the card we have inserted
+			SQLiteDataReader reader = ExecNonQuery("select last_insert_rowid() as last",m_dbConnection);
 
-            while (read.Read())
+
+			while (reader.Read())
             {
-
                 for (int i = 0; i < cost.Length; i++)
                 {
-                    sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + read["last"] + "," + (i) + "," + cost[i] + ")";
+					//Insert in the table on many ressources the card cost
+                    sql = "INSERT INTO cost(fkCard,fkRessource,nbRessource) values(" + reader["last"] + "," + (i) + "," + cost[i] + ")";
                     command = new SQLiteCommand(sql, m_dbConnection);
                     command.ExecuteNonQuery();
                 }
@@ -199,26 +281,48 @@ namespace Splendor
         /// <summary>
         /// Import card from csv to put in the database
         /// </summary>
-        public void ImportCardCsv(string csv = "./cards.csv")
+        public void ImportCardCsv(string csvPath = "./cards.csv")
         {
-            using (var reader = new StreamReader(csv))
-            {
-                reader.ReadLine();
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    var values = line.Split(';');
-                    var newValues = new int[8];
+			string[] reader = null;
 
-                    for (int x = 0; x < values.Length; x++)
-                    {
-                        newValues[x] = int.Parse(values[x].ToString() == "" ? "0" : values[x].ToString());
-                    }
+			try
+			{
+				Program.ConsoleColor("Reading csv fill", ConsoleColor.Yellow);
+				reader = File.ReadAllLines(csvPath); //Try to open the file
+			}
+			catch(Exception e)
+			{
+				Program.ConsoleColor(e.Message); //Show a logs message with the error
 
-                    this.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
-                }
-            }
+				OpenFileDialog openFileDialog = new OpenFileDialog(); //Ask a file to read
+
+				while (!File.Exists(csvPath)) //Check if the selected file exists 
+				{
+					if (openFileDialog.ShowDialog() == DialogResult.OK)
+					{
+						csvPath = openFileDialog.FileName; //Recover the file path
+						Program.ConsoleColor("Fichier csv chargé",ConsoleColor.Green);
+					}					
+				}
+				reader = File.ReadAllLines(csvPath); //Finaly read all line in the file
+			}
+			finally
+			{
+				foreach (var line in reader.Skip(1)) //Going to read all line and skip the first one
+				{
+					string[] values = line.Split(';');
+					var newValues = new int[8];
+
+					for (int x = 0; x < values.Length; x++)
+					{
+						newValues[x] = int.Parse(values[x].ToString() == "" ? "0" : values[x].ToString());
+					}
+
+					//Add the card to the sqlite database
+					this.AddCard(newValues[0], newValues[1], newValues[2], new int[] { newValues[3], newValues[4], newValues[5], newValues[6], newValues[7] });
+					Program.ConsoleColor("New card was add to the database", ConsoleColor.Green);
+				}
+			}
         }
-
     }
 }
