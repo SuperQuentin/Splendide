@@ -152,21 +152,23 @@ namespace Splendor
                 lbl.Visible = true;
             }
 
-            cmdValidateChoice.Visible = false;
-            cmdNextPlayer.Visible = false;
+            cmdValidateChoice.Enabled = false;
+            cmdNextPlayer.Enabled = false;
 
         }
 
         private void ClickOnCard(object sender, EventArgs e)
         {
-			if (nbCoinsSelected.Sum() == 0)
+			if (nbCoinsSelected.Sum() == 0 && cmdPlay.Enabled == false)
 			{
 				TextBox txtBox = sender as TextBox;
 
 				var cardInfo = txtBox.Text.Split('\t');
 
-				List<int> cost = new List<int>() { 2,0,0,0,0 };
+				//TODO : Splite card
 
+				List<int> cost = new List<int>() { 2,0,0,0,0 };
+				bool[] y = new bool[5] { false, false, false, false, false};
 				for (int x = 0; x < cost.Count;x++)
 				{
 					var res = players[currentPlayerId].ressources[x];
@@ -174,29 +176,20 @@ namespace Splendor
 
 					if (res >= cost[x] || res == cost[x] || coin >= cost[x] || coin == cost[x] || coin + res >= cost[x] || coin + res == cost[x])
 					{
-						cardSelect = txtBox.Text;
-						lblChoiceCard.Text = "Carte choisi";
+						y[x] = true;
 					}
-					
-					/**
-					if (res >= cost[x] || res == cost[x])
-					{
-
-					}
-					else if (coin >= cost[x] || coin == cost[x])
-					{
-
-					}
-					else if (coin + res >= cost[x] || coin + res == cost[x])
-					{
-
-					}
-					**/
 				}
-
-				cmdValidateChoice.Visible = true;
-
-
+				if (y.All(x => x == true))
+				{
+					cardSelect = txtBox.Text;
+					lblChoiceCard.Text = "Carte choisi";
+					cmdValidateChoice.Enabled = true;
+				}
+				else
+				{
+					lblChoiceCard.Text = "Pas assez de ressource";
+					cmdValidateChoice.Enabled = false;
+				}
 			}
 			else
 			{ 
@@ -252,6 +245,8 @@ namespace Splendor
 			{
 				allRessourcesLblPlayer[x].Text = player.coins[x].ToString();
 			}
+
+			cmdNextPlayer.Enabled = false;
 		}
 
 		private void LoadPlayer()
@@ -274,7 +269,12 @@ namespace Splendor
         {
 			int res = (int)witchRessource;
 
-			cmdValidateChoice.Visible = true;
+			if (selectCoins.Sum() >= 1)
+			{
+				cmdValidateChoice.Enabled = true;
+			}
+			
+
 			allRessourcesLblChoice[res].Visible = true;
 
 			totalCoins = selectCoins.Sum() - selectCoins[res];
@@ -297,6 +297,7 @@ namespace Splendor
 				availableRessources[res]--;
 				allRessourcesLbl[res].Text = availableRessources[res].ToString();
 				allRessourcesLblChoice[res].Text = selectCoins[res] + "\r\n";
+
 				Program.ConsoleColor("Take " + witchRessource.ToString(), ConsoleColor.Green);
 			}
 			else
@@ -322,9 +323,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblSaphirCoin_Click(object sender, EventArgs e)
         {
-			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);
-			
-				
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);				
         }
 
         /// <summary>
@@ -364,13 +363,13 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdValidateChoice_Click(object sender, EventArgs e)
         {
-            totalCoins = nbCoinsSelected.Sum();
+			totalCoins = nbCoinsSelected.Sum();
 
             if (totalCoins > 1)
             {
 				for (int x = 0; x < players[currentPlayerId].coins.Count();x++)
 				{
-					players[currentPlayerId].coins[x] = nbCoinsSelected[x];
+					players[currentPlayerId].coins[x] += nbCoinsSelected[x];
 				}
 
 				//coins reset
@@ -384,16 +383,16 @@ namespace Splendor
                     nbCoinsSelected[x] = 0;
                 }
 
-                cmdNextPlayer.Visible = true;
+				PlayerTurn(players[currentPlayerId]);
+
+				cmdValidateChoice.Enabled = false;
+
                 cmdNextPlayer.Enabled = true;
             }
 			else
 			{
-				lblChoiceCard.Text = "Carte en stock";
-
 				//TODO
 				
-
 			}
         }
 
@@ -420,6 +419,7 @@ namespace Splendor
 			//Reload the data of the player
 			//We are not allowed to click on the next button
 
+
 			if (currentPlayerId < players.Count() - 1)
 			{
 				currentPlayerId++;
@@ -435,7 +435,11 @@ namespace Splendor
 
         private void coinsTaker(List<int> selectCoins, List<int> availableRessources, Ressources witchRessource)
         {
-            selectCoins[(int)witchRessource]--;
+			if (selectCoins.Sum() <= 2)
+			{
+				cmdValidateChoice.Enabled = false;
+			}
+			selectCoins[(int)witchRessource]--;
             availableRessources[(int)witchRessource]++;
             allRessourcesLbl[(int)witchRessource].Text = availableRessources[(int)witchRessource].ToString();
             allRessourcesLblChoice[(int)witchRessource].Text = selectCoins[(int)witchRessource] + "\r\n";
