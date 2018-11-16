@@ -33,6 +33,7 @@ namespace Splendor
         //Used to store textbox objects
         private List<List<TextBox>> gridCard;
 
+		private string cardSelect;
 
         private List<List<Card>> gridCardStock;
 
@@ -62,9 +63,6 @@ namespace Splendor
 
 		PlayersForm playersForm;
 
-
-		//boolean to enable us to know if the user can click on a coin or a card
-		private bool enableClicLabel;
         //connection to the database
         private ConnectionDB conn;
 
@@ -81,6 +79,7 @@ namespace Splendor
 			gridCard = new List<List<TextBox>>();
 			players = new List<Player>();
 			availableCoins = new List<int>() { 7, 7, 7, 7, 7 };
+			nbCoinsSelected = new List<int>() { 0, 0, 0, 0, 0 };
 		}
 
         /// <summary>
@@ -92,9 +91,15 @@ namespace Splendor
         {
 			//Stock Ressources label objects
             allRessourcesLbl = new List<Label>() { lblRubisCoin, lblEmeraudeCoin, lblOnyxCoin, lblSaphirCoin, lblDiamandCoin };
+			allRessourcesLblPlayer = new List<Label>() { lblPlayerRubisCoin, lblPlayerEmeraudeCoin, lblPlayerOnyxCoin, lblPlayerSaphirCoin, lblPlayerDiamandCoin };
 
-            //Puts coins values in labels
-            for (int x = 0; x < allRessourcesLbl.Count; x++)
+			foreach (Label lblCoin in allRessourcesLbl)
+			{
+				lblCoin.Enabled = false;
+			}
+
+			//Puts coins values in labels
+			for (int x = 0; x < allRessourcesLbl.Count; x++)
             {
                 allRessourcesLbl[x].Text = availableCoins[x].ToString();
             }
@@ -137,8 +142,6 @@ namespace Splendor
             this.Width = 680;
             this.Height = 540;
 
-            enableClicLabel = false;
-
 
             //Initialize a list with ressources labels
             allRessourcesLblChoice = new List<Label>() { lblChoiceRubis, lblChoiceEmeraude, lblChoiceOnyx, lblChoiceSaphir, lblChoiceDiamand };
@@ -156,15 +159,51 @@ namespace Splendor
 
         private void ClickOnCard(object sender, EventArgs e)
         {
-            TextBox txtBox = sender as TextBox;
+			if (nbCoinsSelected.Sum() == 0)
+			{
+				TextBox txtBox = sender as TextBox;
 
-            var cardInfo = txtBox.Text.Split();
+				var cardInfo = txtBox.Text.Split('\t');
+
+				List<int> cost = new List<int>() { 2,0,0,0,0 };
+
+				for (int x = 0; x < cost.Count;x++)
+				{
+					var res = players[currentPlayerId].ressources[x];
+					var coin = players[currentPlayerId].coins[x];
+
+					if (res >= cost[x] || res == cost[x] || coin >= cost[x] || coin == cost[x] || coin + res >= cost[x] || coin + res == cost[x])
+					{
+						cardSelect = txtBox.Text;
+						lblChoiceCard.Text = "Carte choisi";
+					}
+					
+					/**
+					if (res >= cost[x] || res == cost[x])
+					{
+
+					}
+					else if (coin >= cost[x] || coin == cost[x])
+					{
+
+					}
+					else if (coin + res >= cost[x] || coin + res == cost[x])
+					{
+
+					}
+					**/
+				}
+
+				cmdValidateChoice.Visible = true;
 
 
-            //We get the value on the card and we split it to get all the values we need (number of prestige points and ressource)
-            //Enable the button "Validate"
-            //TO DO
-            cmdValidateChoice.Visible = true;
+			}
+			else
+			{ 
+				MessageBox.Show("Vous ne pouvez pas");
+			}
+
+            
         }
 
         /// <summary>
@@ -180,50 +219,91 @@ namespace Splendor
 			cmdInsertPlayer.Enabled = false;
 			cmdPlay.Enabled = false;
 
+			LoadPlayer();
+
+			foreach(Label lblCoin in allRessourcesLbl)
+			{
+				lblCoin.Text = "7";
+				lblCoin.Enabled = true;
+			}
+
+			foreach (Label lblCoinChoice in allRessourcesLblChoice)
+			{
+				lblCoinChoice.Text = "0";
+			}
+
+			foreach(Label lblCoinPlayer in allRessourcesLblPlayer)
+			{
+				lblCoinPlayer.Text = "0";
+			}
+
+
+			PlayerTurn(players[currentPlayerId]);
+
 			Program.ConsoleColor("The game starting", ConsoleColor.Green);
-        }
+
+		}
+
+		private void PlayerTurn(Player player)
+		{
+			lblPlayer.Text = "Jeu du joueur : " + player.name;
+
+			for (int x = 0; x<allRessourcesLblPlayer.Count;x++)
+			{
+				allRessourcesLblPlayer[x].Text = player.coins[x].ToString();
+			}
+		}
+
+		private void LoadPlayer()
+		{
+			cmdNextPlayer.Enabled = false;
+			foreach (Player player in conn.GetPlayers())
+			{
+				this.players.Add(player);
+			}			
+		}
 
 
-        /// <summary>
-        /// Check if the coins can take
-        /// </summary>
-        /// <param name="selectCoins"></param>
-        /// <param name="availableRessources"></param>
-        /// <param name="witchRessource"></param>
-        private void coinsCheck(List<int> selectCoins, List<int> availableRessources, Ressources witchRessource)
+		/// <summary>
+		/// Check if the coins can take
+		/// </summary>
+		/// <param name="selectCoins"></param>
+		/// <param name="availableRessources"></param>
+		/// <param name="witchRessource"></param>
+		private void coinsCheck(List<int> selectCoins, List<int> availableRessources, Ressources witchRessource)
         {
-            if (enableClicLabel)
-            {
-                cmdValidateChoice.Visible = true;
-                allRessourcesLblChoice[(int)witchRessource].Visible = true;
+			int res = (int)witchRessource;
 
-                totalCoins = selectCoins.Sum() - selectCoins[(int)witchRessource];
+			cmdValidateChoice.Visible = true;
+			allRessourcesLblChoice[res].Visible = true;
 
-                if (availableRessources[(int)witchRessource] == 2)
-                {
-                    MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
-                }
-                else if (selectCoins.Any(x => x == 2))
-                {
-                    MessageBox.Show("Vous possédez déjà 2 jetons!");
-                }
-                else if (selectCoins[(int)witchRessource] == 1 && totalCoins >= 1)
-                {
-                    MessageBox.Show("Vous ne pouvez avoir qu'un jeton de chaque couleur!");
-                }
-                else if (selectCoins[(int)witchRessource] + totalCoins != 3)
-                {
-                    selectCoins[(int)witchRessource]++;
-                    availableRessources[(int)witchRessource]--;
-                    allRessourcesLbl[(int)witchRessource].Text = availableRessources[(int)witchRessource].ToString();
-                    allRessourcesLblChoice[(int)witchRessource].Text = selectCoins[(int)witchRessource] + "\r\n";
-                }
-                else
-                {
-                    MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
-                }
-            }
-        }
+			totalCoins = selectCoins.Sum() - selectCoins[res];
+
+			if (availableRessources[res] == 2)
+			{
+				MessageBox.Show("Ce type de jeton ne peut plus être retiré!");
+			}
+			else if (selectCoins.Any(x => x == 2))
+			{
+				MessageBox.Show("Vous possédez déjà 2 jetons!");
+			}
+			else if (selectCoins[res] == 1 && totalCoins >= 1)
+			{
+				MessageBox.Show("Vous ne pouvez avoir qu'un jeton de chaque couleur!");
+			}
+			else if (selectCoins[res] + totalCoins != 3)
+			{
+				selectCoins[res]++;
+				availableRessources[res]--;
+				allRessourcesLbl[res].Text = availableRessources[res].ToString();
+				allRessourcesLblChoice[res].Text = selectCoins[res] + "\r\n";
+				Program.ConsoleColor("Take " + witchRessource.ToString(), ConsoleColor.Green);
+			}
+			else
+			{
+				MessageBox.Show("Vous avez atteint le nombre de jetons maximum!");
+			}
+		}
 
         /// <summary>
         /// click on the red coin (rubis) to tell the player has selected this coin
@@ -232,7 +312,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblRubisCoin_Click(object sender, EventArgs e)
         {
-            coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Rubis);
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Rubis);
         }
 
         /// <summary>
@@ -242,7 +322,9 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblSaphirCoin_Click(object sender, EventArgs e)
         {
-            coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);
+			
+				
         }
 
         /// <summary>
@@ -252,7 +334,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblOnyxCoin_Click(object sender, EventArgs e)
         {
-            coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Onyx);
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Onyx);	
         }
 
         /// <summary>
@@ -262,7 +344,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblEmeraudeCoin_Click(object sender, EventArgs e)
         {
-            coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Emeraude);
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Emeraude);				
         }
 
         /// <summary>
@@ -272,7 +354,7 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblDiamandCoin_Click(object sender, EventArgs e)
         {
-            coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Diamand);
+			coinsCheck(this.nbCoinsSelected, this.availableCoins, Ressources.Diamand);				
         }
 
         /// <summary>
@@ -286,8 +368,17 @@ namespace Splendor
 
             if (totalCoins > 1)
             {
+				for (int x = 0; x < players[currentPlayerId].coins.Count();x++)
+				{
+					players[currentPlayerId].coins[x] = nbCoinsSelected[x];
+				}
 
-                //coins reset
+				//coins reset
+				foreach (Label lblCoins in allRessourcesLblChoice)
+				{
+					lblCoins.Text = "0";
+				}
+
                 for (int x = 0; x < nbCoinsSelected.Count; x++)
                 {
                     nbCoinsSelected[x] = 0;
@@ -296,6 +387,14 @@ namespace Splendor
                 cmdNextPlayer.Visible = true;
                 cmdNextPlayer.Enabled = true;
             }
+			else
+			{
+				lblChoiceCard.Text = "Carte en stock";
+
+				//TODO
+				
+
+			}
         }
 
         /// <summary>
@@ -316,10 +415,21 @@ namespace Splendor
         /// <param name="e"></param>
         private void cmdNextPlayer_Click(object sender, EventArgs e)
         {
-            //TO DO in release 1.0 : 3 is hard coded (number of players for the game), it shouldn't. 
-            //TO DO Get the id of the player : in release 0.1 there are only 3 players
-            //Reload the data of the player
-            //We are not allowed to click on the next button
+			//TO DO in release 1.0 : 3 is hard coded (number of players for the game), it shouldn't. 
+			//TO DO Get the id of the player : in release 0.1 there are only 3 players
+			//Reload the data of the player
+			//We are not allowed to click on the next button
+
+			if (currentPlayerId < players.Count() - 1)
+			{
+				currentPlayerId++;
+			}
+			else
+			{
+				currentPlayerId = 0;
+			}
+
+			PlayerTurn(players[currentPlayerId]);
 
         }
 
@@ -329,11 +439,7 @@ namespace Splendor
             availableRessources[(int)witchRessource]++;
             allRessourcesLbl[(int)witchRessource].Text = availableRessources[(int)witchRessource].ToString();
             allRessourcesLblChoice[(int)witchRessource].Text = selectCoins[(int)witchRessource] + "\r\n";
-
-            if (selectCoins[(int)witchRessource] == 0)
-            {
-                allRessourcesLblChoice[(int)witchRessource].Visible = false;
-            }
+			Program.ConsoleColor("put back the " + witchRessource.ToString(),ConsoleColor.Green);
         }
 
         /// <summary>
@@ -343,7 +449,10 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblChoiceRubis_Click(object sender, EventArgs e)
         {
-            coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Rubis);
+			if (int.Parse(lblChoiceRubis.Text) > 0)
+			{
+				coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Rubis);
+			}
         }
 
         /// <summary>
@@ -353,7 +462,11 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblChoiceSaphir_Click(object sender, EventArgs e)
         {
-            coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);
+			if (int.Parse(lblChoiceSaphir.Text) > 0)
+			{
+				coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Saphir);
+			}
+			
         }
 
         /// <summary>
@@ -363,7 +476,10 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblChoiceOnyx_Click(object sender, EventArgs e)
         {
-            coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Onyx);
+			if (int.Parse(lblChoiceOnyx.Text) > 0)
+			{
+				coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Onyx);
+			}
         }
 
         /// <summary>
@@ -373,7 +489,10 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblChoiceEmeraude_Click(object sender, EventArgs e)
         {
-            coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Emeraude);
+			if (int.Parse(lblChoiceEmeraude.Text) > 0)
+			{
+				coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Emeraude);
+			}
         }
 
         /// <summary>
@@ -383,7 +502,11 @@ namespace Splendor
         /// <param name="e"></param>
         private void lblChoiceDiamand_Click(object sender, EventArgs e)
         {
-            coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Diamand);
+			if (int.Parse(lblChoiceDiamand.Text) > 0)
+			{
+				coinsTaker(this.nbCoinsSelected, this.availableCoins, Ressources.Diamand);
+			}
+			
         }
     }
 }

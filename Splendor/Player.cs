@@ -24,17 +24,23 @@ namespace Splendor
 		/// <param name="id"></param>
 		/// <param name="name"></param>
 		/// <param name="ressources"></param>
-		public Player(int id, string name, int[] ressources = null)
+		public Player(string name, int[] ressources = null, int id = -1, int[] coins = null)
 		{
 			this.id = id;
 			this.name = name;
+
 
 			if (ressources == null)
 			{
 				ressources = new int[] { 0, 0, 0, 0, 0 };
 			}
+			if (coins == null)
+			{
+				coins = new int[] { 0,0,0,0,0};
+			}
 
 			this.ressources = ressources;
+			this.coins = coins;
 		}
 
 		public override string ToString()

@@ -26,7 +26,7 @@ namespace Splendor
 			{
 				if (lstPlayers.Items.Count < 4)
 				{
-					lstPlayers.Items.Add(new Player(lstPlayers.Items.Count, txtBox.Text, new int[5]));
+					lstPlayers.Items.Add(new Player(txtBox.Text, new int[5]));
 					txtBox.Clear();
 					cmdAddPlayer.Enabled = false;
 					Program.ConsoleColor("Player added at the list", ConsoleColor.Green);

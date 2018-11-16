@@ -65,6 +65,9 @@ namespace Splendor
 			
 		}
 
+		/// <summary>
+		/// Connect to database and create principal table
+		/// </summary>
 		private void Initiate()
 		{
 			m_dbConnection = new SQLiteConnection("Data Source=Splendor.sqlite;Version=3;");
@@ -86,19 +89,29 @@ namespace Splendor
 			Program.ConsoleColor("Database initialize", ConsoleColor.Green);
 		}
 
+		/// <summary>
+		/// Execute the sql commande
+		/// </summary>
+		/// <param name="sqlRequest"></param>
+		/// <param name="dbConnection"></param>
+		/// <returns></returns>
 		private SQLiteDataReader ExecNonQuery(string sqlRequest, SQLiteConnection dbConnection)
 		{
 			SQLiteCommand command = new SQLiteCommand(sqlRequest, dbConnection);
 			return command.ExecuteReader();
 		}
 
+		/// <summary>
+		/// Delete and Update with the new value the table players
+		/// </summary>
+		/// <param name="players"></param>
 		public void UpdatePlayers(List<Player> players)
 		{
 			ExecNonQuery("DELETE FROM 'player'", m_dbConnection);
-
+			ExecNonQuery("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='player'",m_dbConnection);
 			foreach (Player player in players)
 			{
-				this.ExecNonQuery("INSERT INTO player (id,pseudo) values(" + player.id + ", '" + player.name + "')", m_dbConnection);
+				this.ExecNonQuery("INSERT INTO player (pseudo) values('" + player.name + "')", m_dbConnection);
 			}
 			
 		}
@@ -142,7 +155,7 @@ namespace Splendor
         {
 			Program.ConsoleColor("Baking player table", ConsoleColor.Yellow);
 
-			string sql = "CREATE TABLE player (id INT PRIMARY KEY, pseudo VARCHAR(20))";
+			string sql = "CREATE TABLE player (id INTEGER PRIMARY KEY AUTOINCREMENT, pseudo VARCHAR(20))";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
 
@@ -164,7 +177,7 @@ namespace Splendor
 
 			while (reader.Read())
 			{
-				players.Add(new Player((int)reader[0], (string)reader[1],new int[7]));
+				players.Add(new Player(reader["pseudo"].ToString(),new int[5], int.Parse(reader["id"].ToString())));
 			}
 
 			return players;
